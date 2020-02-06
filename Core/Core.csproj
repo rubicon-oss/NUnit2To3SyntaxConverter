@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>NUnit2To3SyntaxConverter</RootNamespace>
+        <LangVersion>8</LangVersion>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
 </Project>
