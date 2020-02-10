@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -11,17 +12,99 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using CommandLine;
+using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
-    public class Program
+    class Program
     {
-        public static void Main (string[] args)
+        public static async Task Main (string[] args)
         {
-            Console.WriteLine ("Hello World");
+            await Parser.Default.ParseArguments<CmdLineOptions> (args)
+                    .MapResult (
+                            RunConverter,
+                            _ => Task.FromResult (1));
+        }
+
+        public async static Task<int> RunConverter (CmdLineOptions options)
+        {
+            var msBuild = LocateMsBuild (options);
+            MSBuildLocator.RegisterInstance (msBuild);
+            using var workspace = MSBuildWorkspace.Create();
+            var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new Progress<ProjectLoadProgress>());
+
+            await new NUnitMigration().Migrate (solution);
+
+            return 0;
+        }
+
+        private static VisualStudioInstance? LocateMsBuild (CmdLineOptions options)
+        {
+            // ensure a user supplied msbuild is always found
+            if (!string.IsNullOrWhiteSpace (options.MsBuildPath))
+            {
+                MSBuildLocator.RegisterMSBuildPath (options.MsBuildPath);
+            }
+
+            var instances = MSBuildLocator.QueryVisualStudioInstances();
+
+            // filter by version
+            if (Version.TryParse (options.MsBuildVersion, out var version))
+            {
+                instances = instances.Where (vs => vs.Version.Equals (version));
+            }
+
+            // filter by supplied msbuild file
+            if (options.MsBuildPath != null && File.Exists (options.MsBuildPath))
+            {
+                instances = instances.Where (vs => Path.GetFullPath (vs.MSBuildPath) == Path.GetFullPath (options.MsBuildPath));
+            }
+
+            var queriedInstances = instances.ToList();
+
+            // found no instance -> either non installed or user supplied wrong arguments
+            if (queriedInstances.Count <= 0)
+            {
+                Console.Error.WriteLine ("No MsBuild instances found using supplied arguments!");
+                Console.Error.WriteLine ("Choose one of the following: ");
+                var allInstances = MSBuildLocator.QueryVisualStudioInstances().ToList();
+                for (var i = 0; i < allInstances.Count; i++)
+                {
+                    Console.Error.WriteLine ($"    Instance {i + 1}");
+                    Console.Error.WriteLine ($"        Name        : {allInstances[i].Name}");
+                    Console.Error.WriteLine ($"        Version     : {allInstances[i].Version}");
+                    Console.Error.WriteLine ($"        MsBuildPath : {allInstances[i].MSBuildPath}");
+                }
+
+                return null;
+            }
+
+            // found more than one instance -> not specific enough
+            if (queriedInstances.Count > 1)
+            {
+                Console.Error.WriteLine ("Ambiguous MsBuild configuration supplied!");
+                Console.Error.WriteLine ("Multiple MsBuild version matched your supplied arguments: ");
+                for (var i = 0; i < queriedInstances.Count; i++)
+                {
+                    Console.Error.WriteLine ($"    Instance {i + 1}");
+                    Console.Error.WriteLine ($"        Name        : {queriedInstances[i].Name}");
+                    Console.Error.WriteLine ($"        Version     : {queriedInstances[i].Version}");
+                    Console.Error.WriteLine ($"        MsBuildPath : {queriedInstances[i].MSBuildPath}");
+                }
+
+                return null;
+            }
+
+            return queriedInstances.SingleOrDefault();
         }
     }
 }

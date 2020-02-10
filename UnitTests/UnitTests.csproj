@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Remove="resources\**" CopyToPublishDirectory="always" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="nunit" Version="3.12.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
@@ -19,5 +23,14 @@
         <ProjectReference Include="..\Core\Core.csproj" />
         <ProjectReference Include="..\ConverterConsole\ConverterConsole.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+        <_Resources Include="$(ProjectDir)\resources\**\*.*" />
+    </ItemGroup>
+    
+    <Target Name="CustomAfterBuild" AfterTargets="AfterBuild">
+        <Copy SourceFiles="@(_Resources)" DestinationFolder="$(OutputPath)\resources\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+    </Target>
+
 
 </Project>

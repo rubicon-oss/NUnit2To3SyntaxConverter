@@ -13,6 +13,13 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 
 namespace NUnit2To3SyntaxConverter.UnitTests
@@ -23,6 +30,34 @@ namespace NUnit2To3SyntaxConverter.UnitTests
         public void Test1 ()
         {
             Assert.True(true);
+        }
+
+        [Test]
+        public void TestCompilation ()
+        {
+            var src = File.ReadAllText ("resources/ExpectedExceptionBaseCase.txt");
+            
+            var tree = CSharpSyntaxTree.ParseText (src);
+            var root = (CompilationUnitSyntax) tree.GetRoot();
+            var compilation = CSharpCompilation.Create("HelloWorld")
+                    .AddReferences(
+                            MetadataReference.CreateFromFile(
+                                    typeof(object).Assembly.Location))
+                    .AddReferences(MetadataReference.CreateFromFile(@"resources\nunit.framework.dll"))
+                    .AddSyntaxTrees(tree);
+
+            var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+            var model = compilation.GetSemanticModel(tree);
+            var symbolInfo = model.GetSymbolInfo (method);
+            
+            var myTypeSyntax = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+            var myTypeInfo = model.GetDeclaredSymbol(myTypeSyntax);
+            
+            Assert.That(() => { throw new Exception(""); }, Throws.Exception.With.InstanceOf<Exception>().With.Message.Empty);
+            
+            
+            Console.WriteLine (myTypeInfo.GetAttributes());
+
         }
     }
 }
