@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -51,8 +52,21 @@ namespace NUnit2To3SyntaxConverter
 
         public async Task WriteBack (Document document)
         {
-            var srcText = await document.GetTextAsync();
-            srcText.Write(new StreamWriter(File.OpenWrite(document.FilePath)));
+            var rootNode = await document.GetSyntaxRootAsync();
+            try
+            {
+                using (var fileStream = new FileStream (document.FilePath!, FileMode.Truncate))
+                {
+                    using (var writer = new StreamWriter (fileStream))
+                    {
+                        rootNode!.WriteTo (writer);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", document.FilePath), ex);
+            }
         }
     }
 }

@@ -79,11 +79,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
             var matchTypeFunctionName = MatchType?.ToFullString() switch
             {
-                    "MatchType.Contains" => "Contains",
-                    "MatchType.StartsWith" => "StartsWith",
-                    "MatchType.Regex" => "Matches",
-                    "MatchType.Exact" => "EqualTo",
-                    null => "IsEqualTo",
+                    "MessageMatch.Contains" => "Contains",
+                    "MessageMatch.StartsWith" => "StartsWith",
+                    "MessageMatch.Regex" => "Matches",
+                    "MessageMatch.Exact" => "EqualTo",
+                    null => "EqualTo",
                     _ => "UNKNOWN_MATCH_TYPE"
             };
 

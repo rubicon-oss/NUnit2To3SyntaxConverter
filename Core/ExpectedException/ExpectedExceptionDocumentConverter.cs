@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
@@ -25,6 +26,10 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         {
             var semanticModel = await document.GetSemanticModelAsync();
             var syntaxRoot = await document.GetSyntaxRootAsync();
+            
+            Debug.Assert(semanticModel != null);
+            Debug.Assert(syntaxRoot != null);
+            
             var rewriter = new ExpectedExceptionRewriter(semanticModel , new ExpectedExceptionMethodBodyTransformer(), new ExpectedExceptionAttributeRemover());
             return rewriter.Visit (syntaxRoot);
         }

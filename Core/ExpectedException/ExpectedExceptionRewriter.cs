@@ -85,6 +85,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
                         "UserMessage" => builder.WithUserMessage (value),
                         "ExpectedException" => builder.WithExceptionType (value),
                         "ExpectedMessage" => builder.WithExpectedMessage (value),
+                        "MatchType" => builder.WithMatchType(value),
                         "ExpectedExceptionName" => builder.WithExceptionName (value),
                         "Handler" => builder.WithHandler (value),
                         null => builder.WithExceptionType (value),
