@@ -26,7 +26,7 @@ namespace NUnit2To3SyntaxConverter
     {
         private const string c_supportedLanguage = "C#";
 
-        public static async Task<ConversionUnit?> CreateFromDocument (Document document)
+        public static async Task<ConversionUnit> CreateFromDocument (Document document)
         {
             if (!SupportsDocument (document)) return null;
 

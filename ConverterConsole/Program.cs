@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -47,7 +47,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
             return 0;
         }
 
-        private static VisualStudioInstance? LocateMsBuild (CmdLineOptions options)
+       private static VisualStudioInstance LocateMsBuild (CmdLineOptions options)
         {
             // ensure a user supplied msbuild is always found
             if (!string.IsNullOrWhiteSpace (options.MsBuildPath))

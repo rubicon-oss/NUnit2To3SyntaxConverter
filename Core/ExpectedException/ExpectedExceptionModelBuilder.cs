@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -20,13 +20,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
     internal class ExpectedExceptionModelBuilder
     {
-        private ExpressionSyntax? ExceptionType { get; set; }
-        private ExpressionSyntax? ExceptionName { get; set; }
-        private ExpressionSyntax? UserMessage { get; set; }
-        private ExpressionSyntax? ExpectedMessage { get; set; }
-        private ExpressionSyntax? MatchType { get; set; }
-        private ExpressionSyntax? Handler { get; set; }
-
+        private ExpressionSyntax ExceptionType { get; set; }
+        private ExpressionSyntax ExceptionName { get; set; }
+        private ExpressionSyntax UserMessage { get; set; }
+        private ExpressionSyntax ExpectedMessage { get; set; }
+        private ExpressionSyntax MatchType { get; set; }
         public ExpectedExceptionModelBuilder WithExceptionType (ExpressionSyntax exceptionType)
         {
             ExceptionType = exceptionType;
@@ -51,13 +49,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
             return this;
         }
 
-
-        public ExpectedExceptionModelBuilder WithHandler (ExpressionSyntax handler)
-        {
-            Handler = handler;
-            return this;
-        }
-
         public ExpectedExceptionModelBuilder WithMatchType (ExpressionSyntax matchType)
         {
             MatchType = matchType;
@@ -68,7 +59,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
             => new ExpectedExceptionModel (
                     attributeData: attributeData,
                     exceptionType: ExceptionType,
-                    exceptionName: ExceptionName,
                     userMessage: UserMessage,
                     expectedMessage: ExpectedMessage,
                     matchType: MatchType,

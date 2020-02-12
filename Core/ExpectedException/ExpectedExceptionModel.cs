@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -28,29 +28,24 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public class ExpectedExceptionModel
     {
         public AttributeData AttributeData { get; }
-        public ExpressionSyntax? ExceptionType { get; }
-        public ExpressionSyntax? ExceptionName { get; }
-        public ExpressionSyntax? UserMessage { get; }
-        public ExpressionSyntax? MatchType { get; }
-        public ExpressionSyntax? ExpectedMessage { get; }
-        public ExpressionSyntax? Handler { get; }
+        public ExpressionSyntax ExceptionType { get; }
+        public ExpressionSyntax UserMessage { get; }
+        public ExpressionSyntax MatchType { get; }
+        public ExpressionSyntax ExpectedMessage { get; }
+        public ExpressionSyntax Handler { get; }
 
         public ExpectedExceptionModel (
                 AttributeData attributeData,
-                ExpressionSyntax? exceptionType,
-                ExpressionSyntax? exceptionName,
-                ExpressionSyntax? userMessage,
-                ExpressionSyntax? expectedMessage,
-                ExpressionSyntax? matchType,
-                ExpressionSyntax? handler)
+                ExpressionSyntax exceptionType,
+                ExpressionSyntax userMessage,
+                ExpressionSyntax expectedMessage,
+                ExpressionSyntax matchType)
         {
             AttributeData = attributeData;
             ExceptionType = exceptionType;
-            ExceptionName = exceptionName;
             UserMessage = userMessage;
             MatchType = matchType;
             ExpectedMessage = expectedMessage;
-            Handler = handler;
         }
 
         public ExpressionSyntax AsConstraintExpression ()

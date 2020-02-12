@@ -1,11 +1,11 @@
-﻿﻿using System;
+﻿using System;
 using CommandLine;
 
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
     public class CmdLineOptions
     {
-        public CmdLineOptions (string solutionPath, string? msBuildVersion = null, string? msBuildPath = null)
+        public CmdLineOptions (string solutionPath, string msBuildVersion = null, string msBuildPath = null)
         {
             SolutionPath = solutionPath;
             MsBuildVersion = msBuildVersion;
@@ -15,11 +15,11 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
         [Value(0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
         public string SolutionPath { get; }
         
-        [Option("msbuildversion", Required = false, MetaValue = "VERSION", Group = "MsBuildSpecifier")]
-        public string? MsBuildVersion { get; }
+        [Option("msbuildversion", Required = false, MetaValue = "VERSION")]
+        public string MsBuildVersion { get; }
 
-        [Option("msbuildpath", Required = false, MetaValue = "PATH", Group = "MsBuildSpecifier")]
-        public string? MsBuildPath { get; }
+        [Option("msbuildpath", Required = false, MetaValue = "PATH")]
+        public string MsBuildPath { get; }
 
     }
 }
