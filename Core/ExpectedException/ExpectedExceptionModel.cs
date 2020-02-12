@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -16,6 +16,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -24,9 +26,54 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-   
     public class ExpectedExceptionModel
     {
+        public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
+        {
+            var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
+            Debug.Assert (attributeSyntax != null);
+
+            var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
+
+            return attributeArguments == null
+                    ? NoArgExpectedExceptionModel (attribute)
+                    : WithArgsExpectedExceptionModel (attribute, attributeArguments.Value);
+        }
+
+        private static ExpectedExceptionModel WithArgsExpectedExceptionModel (
+                AttributeData attribute,
+                SeparatedSyntaxList<AttributeArgumentSyntax> attributeArguments)
+        {
+            var builder = new ExpectedExceptionModelBuilder();
+            foreach (var attributeArgument in attributeArguments)
+            {
+                var value = attributeArgument.Expression;
+                var namedArgumentName = attributeArgument.NameColon?.Name
+                                        ?? attributeArgument.NameEquals?.Name;
+                Debug.Assert (value != null);
+
+                builder = namedArgumentName?.ToString() switch
+                {
+                        "UserMessage" => builder.WithUserMessage (value),
+                        "ExpectedException" => builder.WithExceptionType (value),
+                        "ExpectedMessage" => builder.WithExpectedMessage (value),
+                        "MatchType" => builder.WithMatchType (value),
+                        "ExpectedExceptionName" => builder.WithExceptionName (value),
+                        null => builder.WithExceptionTypeOrName (value),
+                        _ => builder
+                };
+            }
+
+            return builder.Build (attribute);
+        }
+
+        private static ExpectedExceptionModel NoArgExpectedExceptionModel (AttributeData attribute)
+        {
+            var builder = new ExpectedExceptionModelBuilder();
+            return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
+                    .Build (attribute);
+        }
+
         public AttributeData AttributeData { get; }
         public ExpressionSyntax ExceptionType { get; }
         public ExpressionSyntax UserMessage { get; }

@@ -59,41 +59,13 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         {
             var methodSymbol = _semanticModel.GetDeclaredSymbol (node);
             var attributes = methodSymbol.GetAttributes();
-            return attributes.Where (attribute => _assemblyFilter.IsSupportedAssembly (attribute.AttributeClass.ContainingAssembly.Identity))
+            return attributes
+                   // .Where (attribute => _assemblyFilter.IsSupportedAssembly (attribute.AttributeClass.ContainingAssembly.Identity))
                     .Where (attribute => attribute.AttributeClass.Name == "ExpectedExceptionAttribute")
-                    .Select (CreateFromAttributeData)
+                    .Select (ExpectedExceptionModel.CreateFromAttributeData)
                     .ToList();
         }
 
-        private static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
-        {
-            var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
-            Debug.Assert (attributeSyntax != null);
-
-            var attributeArguments = attributeSyntax!.ArgumentList!.Arguments;
-            var builder = new ExpectedExceptionModelBuilder();
-
-            foreach (var attributeArgument in attributeArguments)
-            {
-                var value = attributeArgument.Expression;
-                var namedArgumentName = attributeArgument.NameColon?.Name
-                                        ?? attributeArgument.NameEquals?.Name;
-                Debug.Assert (value != null);
-
-                builder = namedArgumentName?.ToString() switch
-                {
-                        "UserMessage" => builder.WithUserMessage (value),
-                        "ExpectedException" => builder.WithExceptionType (value),
-                        "ExpectedMessage" => builder.WithExpectedMessage (value),
-                        "MatchType" => builder.WithMatchType(value),
-                        "ExpectedExceptionName" => builder.WithExceptionName (value),
-                        "Handler" => builder.WithHandler (value),
-                        null => builder.WithExceptionType (value),
-                        _ => builder
-                };
-            }
-
-            return builder.Build (attribute);
-        }
+        
     }
 }

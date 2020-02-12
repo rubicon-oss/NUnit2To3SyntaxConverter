@@ -1,4 +1,4 @@
-#region copyright
+﻿﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH

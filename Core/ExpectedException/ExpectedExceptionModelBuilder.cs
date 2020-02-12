@@ -1,4 +1,5 @@
-#region copyright
+﻿#region copyright
+
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -11,10 +12,15 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
+using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
@@ -56,13 +62,45 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         }
 
         public ExpectedExceptionModel Build (AttributeData attributeData)
-            => new ExpectedExceptionModel (
+        {
+            if (MatchType == null && ExpectedMessage != null)
+            {
+                MatchType = MemberAccess (IdentifierName ("MessageMatch"), "Exact");
+            }
+
+            if (ExceptionName != null && ExceptionType != null)
+            {
+                throw new ArgumentException (
+                        $"Unable to convert ExpectedException attribute, "
+                        + $"both a name: {ExceptionName.ToString()} and a type: {ExceptionType.ToString()} are specified");
+            }
+
+            if (ExceptionName is LiteralExpressionSyntax nameLiteral && ExceptionType == null)
+            {
+                var value = nameLiteral.Token.ValueText;
+                ExceptionType = TypeOfExpression(IdentifierName (value));
+            }
+
+            return new ExpectedExceptionModel (
                     attributeData: attributeData,
                     exceptionType: ExceptionType,
                     userMessage: UserMessage,
                     expectedMessage: ExpectedMessage,
-                    matchType: MatchType,
-                    handler: Handler);
-    }
+                    matchType: MatchType);
+        }
 
+        public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)
+        {
+            if (value is LiteralExpressionSyntax literal)
+            {
+                ExceptionName = literal;
+            }
+            else if (value is TypeOfExpressionSyntax typeOf)
+            {
+                ExceptionType = typeOf;
+            }
+
+            return this;
+        }
+    }
 }
