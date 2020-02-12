@@ -21,8 +21,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
+using Microsoft.CodeAnalysis.MSBuild;
 using NUnit2To3SyntaxConverter.ExpectedException;
 using NUnit2To3SyntaxConverter.Extensions;
 
@@ -30,42 +34,52 @@ namespace NUnit2To3SyntaxConverter
 {
     public class NUnitMigration
     {
-        public NUnitMigration ()
+        private readonly MigrationOptions _options;
+
+        public NUnitMigration (MigrationOptions options)
         {
+            _options = options;
         }
 
         public async Task Migrate (Solution solution)
         {
+            foreach (var project in solution.Projects)
+            {
+                var comp = await project.GetCompilationAsync();
+            }
+
             var tasks = solution.Projects
+                    .Where(project => _options.ProjectFilter.Invoke(project))
                     .SelectMany (project => project.Documents)
-                    .Select(document => ConvertDocument(document, new ExpectedExceptionDocumentConverter()))
-                    .Select(async document => WriteBack(await document));
+                    .Where(document => _options.SourceFileFilter.Invoke(document))
+                    .Select (async document => (document, await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
+                    .Select (async document => WriteBack ((await document).document, (await document).Item2));
 
             await Task.WhenAll (tasks);
         }
 
         public async Task<Document> ConvertDocument (Document document, IDocumentConverter converter)
         {
-                var syntaxTree = await converter.Convert (document);
-                return document.WithSyntaxRoot (syntaxTree);
+            var syntaxTree = await converter.Convert (document);
+            return document.WithSyntaxRoot (syntaxTree);
         }
 
-        public async Task WriteBack (Document document)
+        public async Task WriteBack (Document original, Document newDocument)
         {
-            var rootNode = await document.GetSyntaxRootAsync();
+            var oldRootNode = await original.GetSyntaxRootAsync();
+            var newRootNode = await newDocument.GetSyntaxRootAsync();
+            if (oldRootNode == newRootNode) return;
+            
             try
             {
-                using (var fileStream = new FileStream (document.FilePath!, FileMode.Truncate))
-                {
-                    using (var writer = new StreamWriter (fileStream))
-                    {
-                        rootNode!.WriteTo (writer);
-                    }
-                }
+                using var fileStream = new FileStream (newDocument.FilePath!, FileMode.Truncate);
+                using var writer = new StreamWriter (fileStream, _options.Encoding);
+
+                newRootNode!.WriteTo (writer);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", document.FilePath), ex);
+                throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", newDocument.FilePath), ex);
             }
         }
     }

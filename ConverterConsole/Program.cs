@@ -40,9 +40,12 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
             var msBuild = LocateMsBuild (options);
             MSBuildLocator.RegisterInstance (msBuild);
             using var workspace = MSBuildWorkspace.Create();
-            var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new Progress<ProjectLoadProgress>());
+            workspace.WorkspaceFailed += (sender, args) => { Console.WriteLine (args.Diagnostic); };
+            
+            var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new ConsoleProgressReporter());
 
-            await new NUnitMigration().Migrate (solution);
+            await new NUnitMigration(MigrationOptions.DefaultOptions)
+                    .Migrate (solution);
 
             return 0;
         }
@@ -106,5 +109,21 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
             return queriedInstances.SingleOrDefault();
         }
+        
+        private class ConsoleProgressReporter : IProgress<ProjectLoadProgress>
+        {
+            public void Report(ProjectLoadProgress loadProgress)
+            {
+                var projectDisplay = Path.GetFileName(loadProgress.FilePath);
+                if (loadProgress.TargetFramework != null)
+                {
+                    projectDisplay += $" ({loadProgress.TargetFramework})";
+                }
+
+                Console.WriteLine($"{loadProgress.Operation,-15} {loadProgress.ElapsedTime,-15:m\\:ss\\.fffffff} {projectDisplay}");
+            }
+        }
     }
+    
+    
 }
