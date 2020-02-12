@@ -11,9 +11,9 @@ namespace AlreadyMigratedTests
         {
             Assert.True (true);
 
-            Assert.Throws (typeof (Exception), () => { });
-            Assert.Throws (typeof (Exception), () => { });
-            Assert.Throws (typeof (Exception), () => { });
+            Assert.Throws (typeof (Exception), () => { throw new Exception();});
+            Assert.Throws (typeof (Exception), () => { throw new Exception();});
+            Assert.Throws (typeof (Exception), () => { throw new Exception();});
         }
 
         [Test]
