@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -26,9 +27,11 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionModel
+    public class ExpectedExceptionModel: IExpectedExceptionModel
     {
-        public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
+      private readonly AttributeData _attributeData;
+
+      public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
         {
             var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
             Debug.Assert (attributeSyntax != null);
@@ -74,13 +77,14 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
                     .Build (attribute);
         }
 
-        public AttributeData AttributeData { get; }
+        public async Task<AttributeSyntax> GetAttributeSyntax()
+          => await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
+        
         public ExpressionSyntax ExceptionType { get; }
         public ExpressionSyntax UserMessage { get; }
         public ExpressionSyntax MatchType { get; }
         public ExpressionSyntax ExpectedMessage { get; }
-        public ExpressionSyntax Handler { get; }
-
+        
         public ExpectedExceptionModel (
                 AttributeData attributeData,
                 ExpressionSyntax exceptionType,
@@ -88,7 +92,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
                 ExpressionSyntax expectedMessage,
                 ExpressionSyntax matchType)
         {
-            AttributeData = attributeData;
+            _attributeData = attributeData;
             ExceptionType = exceptionType;
             UserMessage = userMessage;
             MatchType = matchType;

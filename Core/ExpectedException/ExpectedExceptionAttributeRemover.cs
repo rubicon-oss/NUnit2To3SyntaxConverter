@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -11,6 +12,7 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -22,24 +24,29 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionAttributeRemover: ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel>
+    public class ExpectedExceptionAttributeRemover : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
     {
-
-        public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, ExpectedExceptionModel model)
+        public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
         {
-            var toRemove = model.AttributeData.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
-            Debug.Assert(toRemove != null);
-            
-            return node.WithAttributeLists (
+            var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult();
+            Debug.Assert (toRemove != null);
+
+            var newLists =
                     new SyntaxList<AttributeListSyntax> (
-                            node.AttributeLists.Select (list => RemoveFromList (list, toRemove))
-                                    .Where (list => list.Attributes.Any())));
+                            node.AttributeLists
+                                    .Select (list => RemoveFromList (list, toRemove))
+                                    .Where (list => list.Attributes.Any()));
+
+            return node.WithAttributeLists (newLists);
         }
 
         private static AttributeListSyntax RemoveFromList (AttributeListSyntax list, AttributeSyntax attributeSyntax)
         {
-            return AttributeList (SeparatedList (list.Attributes.Where (attr => attr.Name.ToString() != attributeSyntax.Name.ToString())));
+            return list.WithAttributes (
+                    SeparatedList (
+                            list.Attributes
+                                    .Where (attr => attr.Name.ToString() != attributeSyntax.Name.ToString())
+                            ));
         }
-        
     }
 }

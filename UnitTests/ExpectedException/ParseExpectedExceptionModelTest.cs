@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
@@ -25,11 +26,11 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
-    public class ParseExpectedExceptionModel
+    public class ParseExpectedExceptionModelTest
     {
         [Test]
         [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "SimpleBaseCase")]
-        public void NoArgsAttribute (string fileName, string methodName)
+        public async Task NoArgsAttribute (string fileName, string methodName)
         {
             var (methodSymbol, methodSyntax) = new CompiledSourceFileProvider().LoadMethod (fileName, methodName);
             var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (methodSymbol.GetAttributes()[0]);
@@ -41,8 +42,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
                     Is.EqualTo (TypeOfExpression (IdentifierName ("Exception")))
                             .Using<ExpressionSyntax> ((t1, t2) => t1.IsEquivalentTo (t2, false)));
 
-            Assert.That (expectedExceptionModel.Handler, Is.Null);
-            Assert.That (expectedExceptionModel.AttributeData, Is.SameAs (methodSymbol.GetAttributes()[0]));
+            Assert.That (await expectedExceptionModel.GetAttributeSyntax(), Is.SameAs (await methodSymbol.GetAttributes()[0].ApplicationSyntaxReference.GetSyntaxAsync() ));
             Assert.That (expectedExceptionModel.ExpectedMessage, Is.Null);
         }
 
@@ -78,16 +78,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
         [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessage", "test message", "Exact")]
         [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeRegex", "test message regex", "Regex")]
         [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeExact", "test message exact", "Exact")]
-        [TestCase (
-                "resources/ExpectedExceptionFromAttributeTests.cs",
-                "WithCustomExpectedMessageAndMatchTypeStartsWith",
-                "test message startsWith",
-                "StartsWith")]
-        [TestCase (
-                "resources/ExpectedExceptionFromAttributeTests.cs",
-                "WithCustomExpectedMessageAndMatchTypeContains",
-                "test message contains",
-                "Contains")]
+        [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeStartsWith", "test message startsWith", "StartsWith")]
+        [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeContains", "test message contains", "Contains")]
         public void UsesExpectedMessage (string fileName, string methodName, string message, string matchType)
         {
             var (methodSymbol, methodSyntax) = new CompiledSourceFileProvider().LoadMethod (fileName, methodName);
@@ -115,7 +107,6 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
                     Is.EqualTo (TypeOfExpression (IdentifierName ("DivideByZeroException")))
                             .Using<ExpressionSyntax> ((t1, t2) => t1.IsEquivalentTo (t2, false)));
 
-            Assert.That (expectedExceptionModel.Handler, Is.Null);
 
             Assert.That (
                     expectedExceptionModel.ExpectedMessage,

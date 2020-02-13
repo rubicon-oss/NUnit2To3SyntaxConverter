@@ -29,9 +29,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests
     {
         public (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
         {
-            var src = File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/"+ file);
-            
-            
+            var src = File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file);
+
+
             var tree = CSharpSyntaxTree.ParseText (src);
             var root = (CompilationUnitSyntax) tree.GetRoot();
             var compilation = CSharpCompilation.Create ("TestCompilation")
@@ -42,8 +42,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests
                     .AddSyntaxTrees (tree);
 
             var method = root.DescendantNodes()
-                    .OfType<MethodDeclarationSyntax> ()
-                    .Single(syntax => syntax.Identifier.ToString() == methodName);
+                    .OfType<MethodDeclarationSyntax>()
+                    .Single (syntax => syntax.Identifier.ToString() == methodName);
             var model = compilation.GetSemanticModel (tree);
             var methodSymbol = model.GetDeclaredSymbol (method);
             return (methodSymbol, method);
