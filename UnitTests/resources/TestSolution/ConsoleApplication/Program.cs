@@ -2,17 +2,15 @@ using System;
 
 namespace ConsoleApplication
 {
-    internal class Program
+  internal class Program
+  {
+    [ExpectedException]
+    public static void Main (string[] args)
     {
-        [ExpectedException]
-        public static void Main (string[] args)
-        {
-        }
-
-        class ExpectedException: Attribute
-        {
-            
-        }
-        
     }
+
+    class ExpectedException : Attribute
+    {
+    }
+  }
 }
