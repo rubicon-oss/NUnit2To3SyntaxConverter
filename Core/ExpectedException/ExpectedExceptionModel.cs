@@ -76,15 +76,17 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
             return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
                     .Build (attribute);
         }
-
-        public async Task<AttributeSyntax> GetAttributeSyntax()
-          => await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
-        
+      
+                
         public ExpressionSyntax ExceptionType { get; }
         public ExpressionSyntax UserMessage { get; }
         public ExpressionSyntax MatchType { get; }
         public ExpressionSyntax ExpectedMessage { get; }
+
         
+        public async Task<AttributeSyntax> GetAttributeSyntax()
+          => await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
+
         public ExpectedExceptionModel (
                 AttributeData attributeData,
                 ExpressionSyntax exceptionType,
@@ -99,29 +101,28 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
             ExpectedMessage = expectedMessage;
         }
 
-        public ExpressionSyntax AsConstraintExpression ()
+        public ExpressionSyntax AsConstraintExpression (string baseIndent)
         {
             var exception = (ExceptionType as TypeOfExpressionSyntax)?.Type;
             exception ??= GenericName (nameof(Exception));
 
-            var throwsWith = MemberAccess (IdentifierName ("Throws"), "Exception", "With");
-
             var throwsWithInstanceOfExpressionType = MemberAccess (
-                    throwsWith,
+                    IdentifierName("Throws"),
                     GenericName (Identifier ("InstanceOf"), TypeArgumentList (SeparatedList (new[] { exception })))
-                    );
+                    ).WithLeadingTrivia(Whitespace(baseIndent));
 
             var throwsWithInstanceOfExpressionTypeInvocation = SimpleInvocation (throwsWithInstanceOfExpressionType, new ExpressionSyntax[0]);
 
             return ExpectedMessage == null
                     ? throwsWithInstanceOfExpressionTypeInvocation
-                    : WithMessage (throwsWithInstanceOfExpressionTypeInvocation);
+                    : WithMessage (throwsWithInstanceOfExpressionTypeInvocation, baseIndent);
         }
 
-        private ExpressionSyntax WithMessage (ExpressionSyntax expression)
+        private ExpressionSyntax WithMessage (ExpressionSyntax expression, string baseIndent)
         {
             Debug.Assert (ExpectedMessage != null);
-            var withMessage = MemberAccess (expression, "With", "Message");
+            var indent = new string (Formatting.IndentationCharacter, Formatting.IndentationSize);
+            var withMessage = MemberAccess (expression.WithTrailingTrivia(Whitespace(Formatting.NewLine + baseIndent + indent + indent)), "With", "Message");
 
             var matchTypeFunctionName = MatchType?.ToFullString() switch
             {

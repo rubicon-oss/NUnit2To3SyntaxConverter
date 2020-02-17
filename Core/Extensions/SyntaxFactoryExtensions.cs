@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -31,7 +32,11 @@ namespace NUnit2To3SyntaxConverter.Extensions
     {
         public static InvocationExpressionSyntax SimpleInvocation (ExpressionSyntax expression, IEnumerable<ExpressionSyntax> arguments)
         {
-            return InvocationExpression (expression, ArgumentList( SeparatedList(arguments.Select (Argument))));
+            var args = arguments.ToList();
+            var methodCallWhiteSpace = args.Count > 0
+                    ? Whitespace(" ") 
+                    : Whitespace("");
+            return InvocationExpression (expression, ArgumentList( SeparatedList(args.Select (Argument))).WithLeadingTrivia(methodCallWhiteSpace));
         }
 
         public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)

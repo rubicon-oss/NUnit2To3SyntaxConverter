@@ -23,6 +23,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
@@ -52,7 +53,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
             if (expectedExceptionAttribute == null) return node;
 
-            return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute);
+            return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
+                    .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
         private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)

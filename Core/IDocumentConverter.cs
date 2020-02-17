@@ -20,7 +20,7 @@ namespace NUnit2To3SyntaxConverter
 {
     public interface IDocumentConverter
     {
-        Task<SyntaxNode> Convert (Document Document);
+        Task<SyntaxNode> Convert (Document document);
     }
     
 }

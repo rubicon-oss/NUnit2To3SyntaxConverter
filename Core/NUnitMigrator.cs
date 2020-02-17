@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.MSBuild;
 using NUnit2To3SyntaxConverter.ExpectedException;
@@ -52,16 +53,22 @@ namespace NUnit2To3SyntaxConverter
                     .Where(project => _options.ProjectFilter.Invoke(project))
                     .SelectMany (project => project.Documents)
                     .Where(document => _options.SourceFileFilter.Invoke(document))
-                    .Select (async document => (document, await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
-                    .Select (async document => WriteBack ((await document).document, (await document).Item2));
+                    .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
+                    .Select (async document => WriteBack ((await document).Original, (await document).New));
 
             await Task.WhenAll (tasks);
         }
 
-        public async Task<Document> ConvertDocument (Document document, IDocumentConverter converter)
+        public async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
         {
-            var syntaxTree = await converter.Convert (document);
-            return document.WithSyntaxRoot (syntaxTree);
+            var newDoc = document;
+
+            foreach (var converter in converters)
+            {
+              newDoc = newDoc.WithSyntaxRoot (await converter.Convert (newDoc));
+            }
+
+            return document.WithSyntaxRoot (await newDoc.GetSyntaxRootAsync());
         }
 
         public async Task WriteBack (Document original, Document newDocument)

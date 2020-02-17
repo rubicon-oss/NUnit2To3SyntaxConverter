@@ -16,30 +16,56 @@
 #endregion
 
 using System;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using NUnit2To3SyntaxConverter.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionMethodBodyTransformer : ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel>
+  public class ExpectedExceptionMethodBodyTransformer : ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel>
+  {
+    public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, ExpectedExceptionModel model)
     {
-
-        public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, ExpectedExceptionModel model)
-        {
-            var wrappingLambdaExpression =
-                    ParenthesizedLambdaExpression (
-                            ParameterList (SeparatedList<ParameterSyntax>()),
-                            node.Body);
-
-            var assertThat = MemberAccess (IdentifierName ("Assert"), "That");
-            var assertThrows = SimpleInvocation (
-                    assertThat,
-                    new[] { wrappingLambdaExpression, model.AsConstraintExpression() });
+      var indentation = Whitespace (new string (' ', 2));
+      var baseIndentation = node.Body.GetLeadingTrivia();
+      var bodyIndentation = baseIndentation.Add(indentation);
+      var assertThatArgsIndentation = bodyIndentation.Add(indentation).Add(indentation);
 
 
-            return node
-                    .WithBody (Block (ExpressionStatement (assertThrows)));
-        }
+      var lambdaBody = Block(node.Body.Statements.Last().WithLeadingTrivia(Whitespace(" ")).WithTrailingTrivia(Whitespace(" ")))
+          .WithExtraIndentation (new string (Formatting.IndentationCharacter, Formatting.IndentationSize * 2));
+
+      var lambdaExpression =
+          ParenthesizedLambdaExpression (ParameterList().WithTrailingTrivia(Whitespace(" ")) , lambdaBody.WithLeadingTrivia(Whitespace(" ")));
+
+      var assertThat = MemberAccess (IdentifierName ("Assert"), "That")
+              .WithLeadingTrivia(bodyIndentation);
+
+
+      SeparatedSyntaxList<ArgumentSyntax> assertThrowsArgumentList = SeparatedList<ArgumentSyntax> (
+          NodeOrTokenList (
+               Argument (lambdaExpression.WithLeadingTrivia (assertThatArgsIndentation)),
+              Token (SyntaxKind.CommaToken).WithTrailingTrivia (Whitespace (Formatting.NewLine)),
+              Argument(model.AsConstraintExpression(assertThatArgsIndentation.ToFullString()))
+              ));
+
+      var assertThatThrows = InvocationExpression (
+          assertThat.WithTrailingTrivia (Whitespace (" ")),
+          ArgumentList (
+              Token (SyntaxKind.OpenParenToken).WithTrailingTrivia (Whitespace (Formatting.NewLine)),
+              assertThrowsArgumentList,
+              Token (SyntaxKind.CloseParenToken)));
+      
+      return node.WithBody (
+          node.Body.WithStatements (
+              node.Body.Statements.Replace (
+                  node.Body.Statements.Last(),
+                  ExpressionStatement (assertThatThrows).WithTrailingTrivia (Whitespace (Formatting.NewLine)))));
     }
+  }
 }
