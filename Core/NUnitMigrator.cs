@@ -21,6 +21,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using NUnit2To3SyntaxConverter.ExpectedException;
+using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter
 {
@@ -44,7 +45,7 @@ namespace NUnit2To3SyntaxConverter
           .Where (project => _options.ProjectFilter.Invoke (project))
           .SelectMany (project => project.Documents)
           .Where (document => _options.SourceFileFilter.Invoke (document))
-          .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
+          .Select (async document => (Original: document, New: await ConvertDocument (document, new NUnitAssertRenamingDocumentConverter())))
           .Select (async document => WriteBack ((await document).Original, (await document).New));
 
       await Task.WhenAll (tasks);
