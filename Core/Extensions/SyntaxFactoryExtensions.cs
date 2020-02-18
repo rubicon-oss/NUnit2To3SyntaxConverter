@@ -36,7 +36,8 @@ namespace NUnit2To3SyntaxConverter.Extensions
             var methodCallWhiteSpace = args.Count > 0
                     ? Whitespace(" ") 
                     : Whitespace("");
-            return InvocationExpression (expression, ArgumentList( SeparatedList(args.Select (Argument))).WithLeadingTrivia(methodCallWhiteSpace));
+            var argList = SeparatedList (args.Select (args => Argument(args).WithLeadingTrivia()));
+            return InvocationExpression (expression, ArgumentList(argList).WithLeadingTrivia(methodCallWhiteSpace));
         }
 
         public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)

@@ -32,7 +32,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
   {
     private AttributeData LoadAttribute (string fileName, string methodName)
     {
-      var (methodSymbol, _) = new CompiledSourceFileProvider().LoadMethod (fileName, methodName);
+      var (methodSymbol, _) = CompiledSourceFileProvider.LoadMethod (fileName, methodName);
       return methodSymbol.GetAttributes().First();
     }
 

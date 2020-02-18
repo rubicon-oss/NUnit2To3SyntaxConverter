@@ -25,28 +25,35 @@ using NUnit.Framework;
 
 namespace NUnit2To3SyntaxConverter.UnitTests
 {
-    public class CompiledSourceFileProvider
+  public class CompiledSourceFileProvider
+  {
+    public static (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
     {
-        public (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
-        {
-            var src = File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file);
-
-
-            var tree = CSharpSyntaxTree.ParseText (src);
-            var root = (CompilationUnitSyntax) tree.GetRoot();
-            var compilation = CSharpCompilation.Create ("TestCompilation")
-                    .AddReferences (
-                            MetadataReference.CreateFromFile (
-                                    typeof (object).Assembly.Location))
-                    .AddReferences (MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.dll"))
-                    .AddSyntaxTrees (tree);
-
-            var method = root.DescendantNodes()
-                    .OfType<MethodDeclarationSyntax>()
-                    .Single (syntax => syntax.Identifier.ToString() == methodName);
-            var model = compilation.GetSemanticModel (tree);
-            var methodSymbol = model.GetDeclaredSymbol (method);
-            return (methodSymbol, method);
-        }
+      var (model, root) = LoadSemanticModel (file);
+      var method = root.DescendantNodes()
+          .OfType<MethodDeclarationSyntax>()
+          .Single (syntax => syntax.Identifier.ToString() == methodName);
+      var methodSymbol = model.GetDeclaredSymbol (method);
+      return (methodSymbol, method);
     }
+
+    public static (SemanticModel, SyntaxNode) LoadSemanticModel (string file)
+    {
+      var src = File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file);
+
+
+      var tree = CSharpSyntaxTree.ParseText (src);
+      var root = (CompilationUnitSyntax) tree.GetRoot();
+      var compilation = CSharpCompilation.Create ("TestCompilation")
+          .AddReferences (
+              MetadataReference.CreateFromFile (
+                  typeof (object).Assembly.Location))
+          .AddReferences (MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.dll"))
+          .AddSyntaxTrees (tree);
+
+
+      var model = compilation.GetSemanticModel (tree);
+      return (model, root);
+    }
+  }
 }

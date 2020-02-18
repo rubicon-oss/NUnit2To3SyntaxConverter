@@ -20,7 +20,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase("resources/RewriteMethodBodyTests.cs", "MultipleAttributesInAttributeListLast")]
     public void RemovesSingleAttribute (string fileName, string methodName)
     {
-      var (methodSymbol, methodSyntax) = new CompiledSourceFileProvider().LoadMethod (fileName, methodName);
+      var (methodSymbol, methodSyntax) = CompiledSourceFileProvider.LoadMethod (fileName, methodName);
       var model = new Mock<IExpectedExceptionModel>();
       
       model.Setup (m => m.GetAttributeSyntax())

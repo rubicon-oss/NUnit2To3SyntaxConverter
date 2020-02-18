@@ -33,25 +33,22 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     {
       var indentation = Whitespace (new string (' ', 2));
       var baseIndentation = node.Body.GetLeadingTrivia();
-      var bodyIndentation = baseIndentation.Add(indentation);
-      var assertThatArgsIndentation = bodyIndentation.Add(indentation).Add(indentation);
+      var bodyIndentation = baseIndentation.Add (indentation);
+      var assertThatArgsIndentation = bodyIndentation.Add (indentation).Add (indentation);
 
+      var bodyStatement = node.Body.Statements.Last();
 
-      var lambdaBody = Block(node.Body.Statements.Last().WithLeadingTrivia(Whitespace(" ")).WithTrailingTrivia(Whitespace(" ")))
-          .WithExtraIndentation (new string (Formatting.IndentationCharacter, Formatting.IndentationSize * 2));
-
-      var lambdaExpression =
-          ParenthesizedLambdaExpression (ParameterList().WithTrailingTrivia(Whitespace(" ")) , lambdaBody.WithLeadingTrivia(Whitespace(" ")));
+      var lambdaExpression = MakeLambdaExpression (bodyStatement);
 
       var assertThat = MemberAccess (IdentifierName ("Assert"), "That")
-              .WithLeadingTrivia(bodyIndentation);
+          .WithLeadingTrivia (bodyIndentation);
 
 
       SeparatedSyntaxList<ArgumentSyntax> assertThrowsArgumentList = SeparatedList<ArgumentSyntax> (
           NodeOrTokenList (
-               Argument (lambdaExpression.WithLeadingTrivia (assertThatArgsIndentation)),
+              Argument (lambdaExpression.WithLeadingTrivia (assertThatArgsIndentation)),
               Token (SyntaxKind.CommaToken).WithTrailingTrivia (Whitespace (Formatting.NewLine)),
-              Argument(model.AsConstraintExpression(assertThatArgsIndentation.ToFullString()))
+              Argument (model.AsConstraintExpression (assertThatArgsIndentation.ToFullString()))
               ));
 
       var assertThatThrows = InvocationExpression (
@@ -60,12 +57,43 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
               Token (SyntaxKind.OpenParenToken).WithTrailingTrivia (Whitespace (Formatting.NewLine)),
               assertThrowsArgumentList,
               Token (SyntaxKind.CloseParenToken)));
-      
+
       return node.WithBody (
           node.Body.WithStatements (
               node.Body.Statements.Replace (
                   node.Body.Statements.Last(),
                   ExpressionStatement (assertThatThrows).WithTrailingTrivia (Whitespace (Formatting.NewLine)))));
+    }
+
+    private static LambdaExpressionSyntax MakeLambdaExpression (StatementSyntax bodyStatement)
+    {
+      return bodyStatement switch
+      {
+          ExpressionStatementSyntax exprStmt => MakeExpressionLambda (exprStmt),
+          _ => MakeStatementLambda (bodyStatement)
+      };
+    }
+
+    private static LambdaExpressionSyntax MakeStatementLambda (StatementSyntax bodyStatement)
+    {
+      var lambdaBody = Block (bodyStatement.WithLeadingTrivia (Whitespace (" ")).WithTrailingTrivia (Whitespace (" ")))
+          .WithExtraIndentation (new string (Formatting.IndentationCharacter, Formatting.IndentationSize * 2));
+
+      var lambdaExpression = ParenthesizedLambdaExpression (
+          ParameterList().WithTrailingTrivia (Whitespace (" ")),
+          lambdaBody.WithLeadingTrivia (Whitespace (" ")));
+      
+      return lambdaExpression;
+    }
+
+    private static LambdaExpressionSyntax MakeExpressionLambda (ExpressionStatementSyntax bodyExpressionStmt)
+    {
+      var lambdaBody = bodyExpressionStmt.Expression;
+      var lambdaExpression = ParenthesizedLambdaExpression (
+          ParameterList().WithTrailingTrivia (Whitespace (" ")),
+          null,
+          lambdaBody.WithLeadingTrivia(Whitespace(" ")));
+      return lambdaExpression;
     }
   }
 }
