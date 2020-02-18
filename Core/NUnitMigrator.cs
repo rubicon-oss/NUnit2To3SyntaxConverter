@@ -16,78 +16,67 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Emit;
-using Microsoft.CodeAnalysis.MSBuild;
 using NUnit2To3SyntaxConverter.ExpectedException;
-using NUnit2To3SyntaxConverter.Extensions;
 
 namespace NUnit2To3SyntaxConverter
 {
-    public class NUnitMigration
+  public class NUnitMigration
+  {
+    private readonly MigrationOptions _options;
+
+    public NUnitMigration (MigrationOptions options)
     {
-        private readonly MigrationOptions _options;
-
-        public NUnitMigration (MigrationOptions options)
-        {
-            _options = options;
-        }
-
-        public async Task Migrate (Solution solution)
-        {
-            foreach (var project in solution.Projects)
-            {
-                var comp = await project.GetCompilationAsync();
-            }
-
-            var tasks = solution.Projects
-                    .Where(project => _options.ProjectFilter.Invoke(project))
-                    .SelectMany (project => project.Documents)
-                    .Where(document => _options.SourceFileFilter.Invoke(document))
-                    .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
-                    .Select (async document => WriteBack ((await document).Original, (await document).New));
-
-            await Task.WhenAll (tasks);
-        }
-
-        public async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
-        {
-            var newDoc = document;
-
-            foreach (var converter in converters)
-            {
-              newDoc = newDoc.WithSyntaxRoot (await converter.Convert (newDoc));
-            }
-
-            return document.WithSyntaxRoot (await newDoc.GetSyntaxRootAsync());
-        }
-
-        public async Task WriteBack (Document original, Document newDocument)
-        {
-            var oldRootNode = await original.GetSyntaxRootAsync();
-            var newRootNode = await newDocument.GetSyntaxRootAsync();
-            if (oldRootNode == newRootNode) return;
-            
-            try
-            {
-                using var fileStream = new FileStream (newDocument.FilePath!, FileMode.Truncate);
-                using var writer = new StreamWriter (fileStream, _options.Encoding);
-
-                newRootNode!.WriteTo (writer);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", newDocument.FilePath), ex);
-            }
-        }
+      _options = options;
     }
+
+    public async Task Migrate (Solution solution)
+    {
+      foreach (var project in solution.Projects)
+      {
+        var comp = await project.GetCompilationAsync();
+      }
+
+      var tasks = solution.Projects
+          .Where (project => _options.ProjectFilter.Invoke (project))
+          .SelectMany (project => project.Documents)
+          .Where (document => _options.SourceFileFilter.Invoke (document))
+          .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
+          .Select (async document => WriteBack ((await document).Original, (await document).New));
+
+      await Task.WhenAll (tasks);
+    }
+
+    public async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
+    {
+      var newDoc = document;
+
+      foreach (var converter in converters)
+        newDoc = newDoc.WithSyntaxRoot (await converter.Convert (newDoc));
+
+      return document.WithSyntaxRoot (await newDoc.GetSyntaxRootAsync());
+    }
+
+    public async Task WriteBack (Document original, Document newDocument)
+    {
+      var oldRootNode = await original.GetSyntaxRootAsync();
+      var newRootNode = await newDocument.GetSyntaxRootAsync();
+      if (oldRootNode == newRootNode) return;
+
+      try
+      {
+        using var fileStream = new FileStream (newDocument.FilePath!, FileMode.Truncate);
+        using var writer = new StreamWriter (fileStream, _options.Encoding);
+
+        newRootNode!.WriteTo (writer);
+      }
+      catch (Exception ex)
+      {
+        throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", newDocument.FilePath), ex);
+      }
+    }
+  }
 }

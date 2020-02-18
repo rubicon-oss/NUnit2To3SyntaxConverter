@@ -20,7 +20,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -46,8 +45,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       Assert.That (expectedExceptionModel, Is.Not.Null);
       Assert.That (
-              expectedExceptionModel.ExceptionType,
-              Is.EquivalentTo (TypeOfExpression (IdentifierName ("Exception"))));
+          expectedExceptionModel.ExceptionType,
+          Is.EquivalentTo (TypeOfExpression (IdentifierName ("Exception"))));
       Assert.That (
           await expectedExceptionModel.GetAttributeSyntax(),
           Is.SameAs (await attributeData.ApplicationSyntaxReference.GetSyntaxAsync()));

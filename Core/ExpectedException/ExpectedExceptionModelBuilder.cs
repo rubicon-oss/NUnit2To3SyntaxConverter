@@ -17,90 +17,82 @@
 
 using System;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    internal class ExpectedExceptionModelBuilder
+  internal class ExpectedExceptionModelBuilder
+  {
+    private ExpressionSyntax ExceptionType { get; set; }
+    private ExpressionSyntax ExceptionName { get; set; }
+    private ExpressionSyntax UserMessage { get; set; }
+    private ExpressionSyntax ExpectedMessage { get; set; }
+    private ExpressionSyntax MatchType { get; set; }
+
+    public ExpectedExceptionModelBuilder WithExceptionType (ExpressionSyntax exceptionType)
     {
-        private ExpressionSyntax ExceptionType { get; set; }
-        private ExpressionSyntax ExceptionName { get; set; }
-        private ExpressionSyntax UserMessage { get; set; }
-        private ExpressionSyntax ExpectedMessage { get; set; }
-        private ExpressionSyntax MatchType { get; set; }
-        public ExpectedExceptionModelBuilder WithExceptionType (ExpressionSyntax exceptionType)
-        {
-            ExceptionType = exceptionType;
-            return this;
-        }
-
-        public ExpectedExceptionModelBuilder WithExceptionName (ExpressionSyntax exceptionName)
-        {
-            ExceptionName = exceptionName;
-            return this;
-        }
-
-        public ExpectedExceptionModelBuilder WithUserMessage (ExpressionSyntax userMessage)
-        {
-            UserMessage = userMessage;
-            return this;
-        }
-
-        public ExpectedExceptionModelBuilder WithExpectedMessage (ExpressionSyntax expectedMessage)
-        {
-            ExpectedMessage = expectedMessage;
-            return this;
-        }
-
-        public ExpectedExceptionModelBuilder WithMatchType (ExpressionSyntax matchType)
-        {
-            MatchType = matchType;
-            return this;
-        }
-
-        public ExpectedExceptionModel Build (AttributeData attributeData)
-        {
-            if (MatchType == null && ExpectedMessage != null)
-            {
-                MatchType = MemberAccess (IdentifierName ("MessageMatch"), "Exact");
-            }
-
-            if (ExceptionName != null && ExceptionType != null)
-            {
-                throw new ArgumentException (
-                        $"Unable to convert ExpectedException attribute, "
-                        + $"both a name: {ExceptionName.ToString()} and a type: {ExceptionType.ToString()} are specified");
-            }
-
-            if (ExceptionName is LiteralExpressionSyntax nameLiteral && ExceptionType == null)
-            {
-                var value = nameLiteral.Token.ValueText;
-                ExceptionType = TypeOfExpression(IdentifierName (value));
-            }
-
-            return new ExpectedExceptionModel (
-                    attributeData: attributeData,
-                    exceptionType: ExceptionType,
-                    userMessage: UserMessage,
-                    expectedMessage: ExpectedMessage,
-                    matchType: MatchType);
-        }
-
-        public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)
-        {
-            if (value is LiteralExpressionSyntax literal)
-            {
-                ExceptionName = literal;
-            }
-            else if (value is TypeOfExpressionSyntax typeOf)
-            {
-                ExceptionType = typeOf;
-            }
-
-            return this;
-        }
+      ExceptionType = exceptionType;
+      return this;
     }
+
+    public ExpectedExceptionModelBuilder WithExceptionName (ExpressionSyntax exceptionName)
+    {
+      ExceptionName = exceptionName;
+      return this;
+    }
+
+    public ExpectedExceptionModelBuilder WithUserMessage (ExpressionSyntax userMessage)
+    {
+      UserMessage = userMessage;
+      return this;
+    }
+
+    public ExpectedExceptionModelBuilder WithExpectedMessage (ExpressionSyntax expectedMessage)
+    {
+      ExpectedMessage = expectedMessage;
+      return this;
+    }
+
+    public ExpectedExceptionModelBuilder WithMatchType (ExpressionSyntax matchType)
+    {
+      MatchType = matchType;
+      return this;
+    }
+
+    public ExpectedExceptionModel Build (AttributeData attributeData)
+    {
+      if (MatchType == null && ExpectedMessage != null)
+        MatchType = MemberAccess (IdentifierName ("MessageMatch"), "Exact");
+
+      if (ExceptionName != null && ExceptionType != null)
+        throw new ArgumentException (
+            "Unable to convert ExpectedException attribute, "
+            + $"both a name: {ExceptionName.ToString()} and a type: {ExceptionType.ToString()} are specified");
+
+      if (ExceptionName is LiteralExpressionSyntax nameLiteral && ExceptionType == null)
+      {
+        var value = nameLiteral.Token.ValueText;
+        ExceptionType = TypeOfExpression (IdentifierName (value));
+      }
+
+      return new ExpectedExceptionModel (
+          attributeData,
+          ExceptionType,
+          UserMessage,
+          ExpectedMessage,
+          MatchType);
+    }
+
+    public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)
+    {
+      if (value is LiteralExpressionSyntax literal)
+        ExceptionName = literal;
+      else if (value is TypeOfExpressionSyntax typeOf)
+        ExceptionType = typeOf;
+
+      return this;
+    }
+  }
 }

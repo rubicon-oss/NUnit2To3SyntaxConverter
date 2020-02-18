@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
@@ -19,13 +19,34 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "SimpleBaseCase")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithCustomExceptionType")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithWellKnownExceptionType")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithCustomExpectedMessage")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithCustomExpectedMessageAndMatchTypeRegex")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithAllCustomFieldsAndLongMessage")]
-    [TestCase ("/resources/ExpectedExceptionIntegrationTestCases.cs", "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs", "WithMultiLineString")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "SimpleBaseCase")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithCustomExceptionType")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithWellKnownExceptionType")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithCustomExpectedMessage")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithCustomExpectedMessageAndMatchTypeRegex")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithAllCustomFieldsAndLongMessage")]
+    [TestCase (
+        "/resources/ExpectedExceptionIntegrationTestCases.cs",
+        "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs",
+        "WithMultiLineString")]
     public void FormatSimpleCase (string filename, string filenameExpected, string method)
     {
       var (rewriter, syntax) = RewriterFor (filename, method);

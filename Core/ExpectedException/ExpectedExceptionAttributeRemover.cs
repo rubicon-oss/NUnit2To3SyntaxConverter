@@ -24,29 +24,29 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionAttributeRemover : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
+  public class ExpectedExceptionAttributeRemover : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
+  {
+    public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
-        public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
-        {
-            var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult();
-            Debug.Assert (toRemove != null);
+      var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult();
+      Debug.Assert (toRemove != null);
 
-            var newLists =
-                    new SyntaxList<AttributeListSyntax> (
-                            node.AttributeLists
-                                    .Select (list => RemoveFromList (list, toRemove))
-                                    .Where (list => list.Attributes.Any()));
+      var newLists =
+          new SyntaxList<AttributeListSyntax> (
+              node.AttributeLists
+                  .Select (list => RemoveFromList (list, toRemove))
+                  .Where (list => list.Attributes.Any()));
 
-            return node.WithAttributeLists (newLists);
-        }
-
-        private static AttributeListSyntax RemoveFromList (AttributeListSyntax list, AttributeSyntax attributeSyntax)
-        {
-            return list.WithAttributes (
-                    SeparatedList (
-                            list.Attributes
-                                    .Where (attr => attr.Name.ToString() != attributeSyntax.Name.ToString())
-                            ));
-        }
+      return node.WithAttributeLists (newLists);
     }
+
+    private static AttributeListSyntax RemoveFromList (AttributeListSyntax list, AttributeSyntax attributeSyntax)
+    {
+      return list.WithAttributes (
+          SeparatedList (
+              list.Attributes
+                  .Where (attr => attr.Name.ToString() != attributeSyntax.Name.ToString())
+              ));
+    }
+  }
 }

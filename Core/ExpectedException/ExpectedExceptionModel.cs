@@ -16,8 +16,6 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -31,6 +29,46 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
   public class ExpectedExceptionModel : IExpectedExceptionModel
   {
     private readonly AttributeData _attributeData;
+
+    public ExpectedExceptionModel (
+        AttributeData attributeData,
+        ExpressionSyntax exceptionType,
+        ExpressionSyntax userMessage,
+        ExpressionSyntax expectedMessage,
+        ExpressionSyntax matchType)
+    {
+      _attributeData = attributeData;
+      ExceptionType = exceptionType;
+      UserMessage = userMessage;
+      MatchType = matchType;
+      ExpectedMessage = expectedMessage;
+    }
+
+
+    public ExpressionSyntax ExceptionType { get; }
+    public ExpressionSyntax UserMessage { get; }
+    public ExpressionSyntax MatchType { get; }
+    public ExpressionSyntax ExpectedMessage { get; }
+
+
+    public async Task<AttributeSyntax> GetAttributeSyntax ()
+    {
+      return await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
+    }
+
+    public ExpressionSyntax AsConstraintExpression (string baseIndent)
+    {
+      var exception = (ExceptionType as TypeOfExpressionSyntax)
+                      ?.Type.ToString()
+                      ?? nameof(Exception);
+
+      var throwsWithInstanceOfExpressionType = WellKnownExceptions.ThrowsExceptionConstrainSyntax (exception)
+          .WithLeadingTrivia (Whitespace (baseIndent));
+
+      return ExpectedMessage == null
+          ? throwsWithInstanceOfExpressionType
+          : WithMessage (throwsWithInstanceOfExpressionType, baseIndent);
+    }
 
     public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
     {
@@ -76,44 +114,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var builder = new ExpectedExceptionModelBuilder();
       return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
           .Build (attribute);
-    }
-
-
-    public ExpressionSyntax ExceptionType { get; }
-    public ExpressionSyntax UserMessage { get; }
-    public ExpressionSyntax MatchType { get; }
-    public ExpressionSyntax ExpectedMessage { get; }
-
-
-    public async Task<AttributeSyntax> GetAttributeSyntax ()
-      => await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
-
-    public ExpectedExceptionModel (
-        AttributeData attributeData,
-        ExpressionSyntax exceptionType,
-        ExpressionSyntax userMessage,
-        ExpressionSyntax expectedMessage,
-        ExpressionSyntax matchType)
-    {
-      _attributeData = attributeData;
-      ExceptionType = exceptionType;
-      UserMessage = userMessage;
-      MatchType = matchType;
-      ExpectedMessage = expectedMessage;
-    }
-
-    public ExpressionSyntax AsConstraintExpression (string baseIndent)
-    {
-      var exception = (ExceptionType as TypeOfExpressionSyntax)
-                      ?.Type.ToString()
-                      ?? nameof(Exception);
-
-      var throwsWithInstanceOfExpressionType = WellKnownExceptions.ThrowsExceptionConstrainSyntax (exception)
-          .WithLeadingTrivia (Whitespace (baseIndent));
-
-      return ExpectedMessage == null
-          ? throwsWithInstanceOfExpressionType
-          : WithMessage (throwsWithInstanceOfExpressionType, baseIndent);
     }
 
     private ExpressionSyntax WithMessage (ExpressionSyntax expression, string baseIndent)

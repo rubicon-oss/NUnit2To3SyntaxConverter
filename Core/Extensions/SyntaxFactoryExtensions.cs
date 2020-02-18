@@ -16,11 +16,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -28,31 +26,30 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.Extensions
 {
-    public static class SyntaxFactoryUtils
+  public static class SyntaxFactoryUtils
+  {
+    public static InvocationExpressionSyntax SimpleInvocation (ExpressionSyntax expression, IEnumerable<ExpressionSyntax> arguments)
     {
-        public static InvocationExpressionSyntax SimpleInvocation (ExpressionSyntax expression, IEnumerable<ExpressionSyntax> arguments)
-        {
-            var args = arguments.ToList();
-            var methodCallWhiteSpace = args.Count > 0
-                    ? Whitespace(" ") 
-                    : Whitespace("");
-            var argList = SeparatedList (args.Select (args => Argument(args).WithLeadingTrivia()));
-            return InvocationExpression (expression, ArgumentList(argList).WithLeadingTrivia(methodCallWhiteSpace));
-        }
-
-        public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)
-        {
-            Debug.Assert(accessor.Length > 0);
-            var access = MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, IdentifierName (accessor[0]));
-            return accessor.Length == 1 
-                    ? access 
-                    : MemberAccess(access, accessor.Skip(1).ToArray());
-        }
-        
-        public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, SimpleNameSyntax nameSyntax)
-        {
-            return MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, nameSyntax);
-        }
-        
+      var args = arguments.ToList();
+      var methodCallWhiteSpace = args.Count > 0
+          ? Whitespace (" ")
+          : Whitespace ("");
+      var argList = SeparatedList (args.Select (args => Argument (args).WithLeadingTrivia()));
+      return InvocationExpression (expression, ArgumentList (argList).WithLeadingTrivia (methodCallWhiteSpace));
     }
+
+    public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)
+    {
+      Debug.Assert (accessor.Length > 0);
+      var access = MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, IdentifierName (accessor[0]));
+      return accessor.Length == 1
+          ? access
+          : MemberAccess (access, accessor.Skip (1).ToArray());
+    }
+
+    public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, SimpleNameSyntax nameSyntax)
+    {
+      return MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, nameSyntax);
+    }
+  }
 }

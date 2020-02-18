@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml;
+﻿using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -25,8 +23,8 @@ namespace NUnit2To3SyntaxConverter.Extensions
 
     private class ExtraIndentationNodeVisitor : CSharpSyntaxRewriter
     {
-      private readonly string _newLine;
       private readonly string _extraIndentation;
+      private readonly string _newLine;
 
       public ExtraIndentationNodeVisitor (string newLine, string extraIndentation)
       {
@@ -52,8 +50,8 @@ namespace NUnit2To3SyntaxConverter.Extensions
 
     private class IndentationNodeVisitor : CSharpSyntaxRewriter
     {
-      private readonly string _newLine;
       private readonly string _indentation;
+      private readonly string _newLine;
 
       public IndentationNodeVisitor (string newLine, string indentation)
       {
@@ -64,9 +62,7 @@ namespace NUnit2To3SyntaxConverter.Extensions
       public override SyntaxTrivia VisitTrivia (SyntaxTrivia trivia)
       {
         if (trivia.IsKind (SyntaxKind.WhitespaceTrivia) && trivia.ToFullString().Length > 1)
-        {
           return Whitespace (_indentation);
-        }
 
         return trivia;
       }

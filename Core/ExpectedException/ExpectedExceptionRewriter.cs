@@ -16,58 +16,52 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionRewriter : CSharpSyntaxRewriter
+  public class ExpectedExceptionRewriter : CSharpSyntaxRewriter
+  {
+    private readonly NUnitAssemblyFilter _assemblyFilter;
+    private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _attributeRemover;
+    private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _methodBodyTransformer;
+    private readonly SemanticModel _semanticModel;
+
+    public ExpectedExceptionRewriter (
+        SemanticModel semanticModel,
+        ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> methodBodyTransformer,
+        ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> attributeRemover)
     {
-        private readonly SemanticModel _semanticModel;
-        private readonly NUnitAssemblyFilter _assemblyFilter;
-        private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _methodBodyTransformer;
-        private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _attributeRemover;
-
-        public ExpectedExceptionRewriter (
-                SemanticModel semanticModel,
-                ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> methodBodyTransformer,
-                ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> attributeRemover)
-        {
-            _semanticModel = semanticModel;
-            _methodBodyTransformer = methodBodyTransformer;
-            _attributeRemover = attributeRemover;
-            _assemblyFilter = new NUnitAssemblyFilter();
-        }
-
-        public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
-        {
-            var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node).SingleOrDefault();
-
-            if (expectedExceptionAttribute == null) return node;
-
-            return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
-                    .WithAdditionalAnnotations(Formatter.Annotation);
-        }
-
-        private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)
-        {
-            var methodSymbol = _semanticModel.GetDeclaredSymbol (node);
-            var attributes = methodSymbol.GetAttributes();
-            return attributes
-                   // .Where (attribute => _assemblyFilter.IsSupportedAssembly (attribute.AttributeClass.ContainingAssembly.Identity))
-                    .Where (attribute => attribute.AttributeClass.Name == "ExpectedExceptionAttribute")
-                    .Select (ExpectedExceptionModel.CreateFromAttributeData)
-                    .ToList();
-        }
-
-        
+      _semanticModel = semanticModel;
+      _methodBodyTransformer = methodBodyTransformer;
+      _attributeRemover = attributeRemover;
+      _assemblyFilter = new NUnitAssemblyFilter();
     }
+
+    public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
+    {
+      var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node).SingleOrDefault();
+
+      if (expectedExceptionAttribute == null) return node;
+
+      return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
+          .WithAdditionalAnnotations (Formatter.Annotation);
+    }
+
+    private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)
+    {
+      var methodSymbol = _semanticModel.GetDeclaredSymbol (node);
+      var attributes = methodSymbol.GetAttributes();
+      return attributes
+          // .Where (attribute => _assemblyFilter.IsSupportedAssembly (attribute.AttributeClass.ContainingAssembly.Identity))
+          .Where (attribute => attribute.AttributeClass.Name == "ExpectedExceptionAttribute")
+          .Select (ExpectedExceptionModel.CreateFromAttributeData)
+          .ToList();
+    }
+  }
 }

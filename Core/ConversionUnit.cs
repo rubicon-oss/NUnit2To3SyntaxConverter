@@ -22,41 +22,39 @@ using Microsoft.CodeAnalysis;
 
 namespace NUnit2To3SyntaxConverter
 {
-    public class ConversionUnit
+  public class ConversionUnit
+  {
+    private const string c_supportedLanguage = "C#";
+    private readonly Document _document;
+    private readonly SemanticModel _semanticModel;
+
+    private readonly SyntaxNode _syntaxRoot;
+
+    private ConversionUnit (Document document, SyntaxNode syntaxRoot, SemanticModel semanticModel)
     {
-        private const string c_supportedLanguage = "C#";
-
-        public static async Task<ConversionUnit> CreateFromDocument (Document document)
-        {
-            if (!SupportsDocument (document)) return null;
-
-            var syntaxTree = (await document.GetSyntaxTreeAsync())?.GetRoot();
-            var semanticModel = await document.GetSemanticModelAsync();
-            Debug.Assert (syntaxTree != null);
-            Debug.Assert (semanticModel != null);
-            
-            
-            
-            return new ConversionUnit (document, syntaxTree, semanticModel);
-        }
-        
-        private static bool SupportsDocument (Document document)
-        {
-            return document.Project.Language == c_supportedLanguage
-                   && document.SupportsSemanticModel
-                   && document.SupportsSyntaxTree;
-        }
-
-        private readonly SyntaxNode _syntaxRoot;
-        private readonly Document _document;
-        private readonly SemanticModel _semanticModel;
-        
-        private ConversionUnit (Document document, SyntaxNode syntaxRoot, SemanticModel semanticModel)
-        {
-            _document = document;
-            _syntaxRoot = syntaxRoot;
-            _semanticModel = semanticModel;
-        }
-
+      _document = document;
+      _syntaxRoot = syntaxRoot;
+      _semanticModel = semanticModel;
     }
+
+    public static async Task<ConversionUnit> CreateFromDocument (Document document)
+    {
+      if (!SupportsDocument (document)) return null;
+
+      var syntaxTree = (await document.GetSyntaxTreeAsync())?.GetRoot();
+      var semanticModel = await document.GetSemanticModelAsync();
+      Debug.Assert (syntaxTree != null);
+      Debug.Assert (semanticModel != null);
+
+
+      return new ConversionUnit (document, syntaxTree, semanticModel);
+    }
+
+    private static bool SupportsDocument (Document document)
+    {
+      return document.Project.Language == c_supportedLanguage
+             && document.SupportsSemanticModel
+             && document.SupportsSyntaxTree;
+    }
+  }
 }

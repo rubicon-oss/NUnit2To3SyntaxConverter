@@ -15,15 +15,14 @@
 
 #endregion
 
-using System.Linq.Expressions;
+using System;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter
 {
-    public interface ISyntaxTransformer<TSyntax, in TContext>
-            where TSyntax : SyntaxNode
-    {
-        TSyntax Transform (TSyntax node, TContext context);
-    }
+  public interface ISyntaxTransformer<TSyntax, in TContext>
+      where TSyntax : SyntaxNode
+  {
+    TSyntax Transform (TSyntax node, TContext context);
+  }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;

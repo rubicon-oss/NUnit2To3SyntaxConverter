@@ -16,11 +16,9 @@
 #endregion
 
 using System;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using NUnit2To3SyntaxConverter.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
@@ -44,7 +42,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
           .WithLeadingTrivia (bodyIndentation);
 
 
-      SeparatedSyntaxList<ArgumentSyntax> assertThrowsArgumentList = SeparatedList<ArgumentSyntax> (
+      var assertThrowsArgumentList = SeparatedList<ArgumentSyntax> (
           NodeOrTokenList (
               Argument (lambdaExpression.WithLeadingTrivia (assertThatArgsIndentation)),
               Token (SyntaxKind.CommaToken).WithTrailingTrivia (Whitespace (Formatting.NewLine)),
@@ -82,7 +80,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var lambdaExpression = ParenthesizedLambdaExpression (
           ParameterList().WithTrailingTrivia (Whitespace (" ")),
           lambdaBody.WithLeadingTrivia (Whitespace (" ")));
-      
+
       return lambdaExpression;
     }
 
@@ -92,7 +90,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var lambdaExpression = ParenthesizedLambdaExpression (
           ParameterList().WithTrailingTrivia (Whitespace (" ")),
           null,
-          lambdaBody.WithLeadingTrivia(Whitespace(" ")));
+          lambdaBody.WithLeadingTrivia (Whitespace (" ")));
       return lambdaExpression;
     }
   }

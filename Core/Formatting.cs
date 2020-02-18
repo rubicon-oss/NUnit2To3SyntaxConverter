@@ -1,4 +1,6 @@
-﻿namespace NUnit2To3SyntaxConverter
+﻿using System;
+
+namespace NUnit2To3SyntaxConverter
 {
   public static class Formatting
   {

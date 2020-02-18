@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -11,6 +12,7 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
 using System;
@@ -20,18 +22,21 @@ using Microsoft.CodeAnalysis;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-    public class ExpectedExceptionDocumentConverter: IDocumentConverter
+  public class ExpectedExceptionDocumentConverter : IDocumentConverter
+  {
+    public async Task<SyntaxNode> Convert (Document document)
     {
-        public async Task<SyntaxNode> Convert (Document document)
-        {
-            var semanticModel = await document.GetSemanticModelAsync();
-            var syntaxRoot = await document.GetSyntaxRootAsync();
-            
-            Debug.Assert(semanticModel != null);
-            Debug.Assert(syntaxRoot != null);
-            
-            var rewriter = new ExpectedExceptionRewriter(semanticModel , new ExpectedExceptionMethodBodyTransformer(), new ExpectedExceptionAttributeRemover());
-            return rewriter.Visit (syntaxRoot);
-        }
+      var semanticModel = await document.GetSemanticModelAsync();
+      var syntaxRoot = await document.GetSyntaxRootAsync();
+
+      Debug.Assert (semanticModel != null);
+      Debug.Assert (syntaxRoot != null);
+
+      var rewriter = new ExpectedExceptionRewriter (
+          semanticModel,
+          new ExpectedExceptionMethodBodyTransformer(),
+          new ExpectedExceptionAttributeRemover());
+      return rewriter.Visit (syntaxRoot);
     }
+  }
 }
