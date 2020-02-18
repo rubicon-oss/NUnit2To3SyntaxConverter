@@ -25,7 +25,6 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
                                            { "DoesNotStartWith", "Does.Not.StartWith" },
                                            { "Contains", "Does.Contain" },
                                            { "DoesNotContain", "Does.Not.Contain" },
-                                           { "All", "Has.All" }
                                        }
                            },
                            {
