@@ -1,5 +1,4 @@
 ﻿#region copyright
- 
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -12,14 +11,18 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 #endregion
 
-using System;
+using NUnit.Framework;
 
-namespace NUnit2To3SyntaxConverter
+namespace NUnit2To3SyntaxConverter.UnitTests
 {
-  public class Library
-  {
-  }
+    public class Test
+    {
+        [Test]
+        public void Test1 ()
+        {
+            Assert.True(true);
+        }
+    }
 }
