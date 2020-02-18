@@ -29,8 +29,7 @@
     </ItemGroup>
 
     <Target Name="CustomAfterBuild" AfterTargets="AfterBuild">
-        <Copy SourceFiles="@(_Resources)" DestinationFolder="$(OutputPath)\resources\%(RecursiveDir)" SkipUnchangedFiles="true"
-              OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+        <Copy SourceFiles="@(_Resources)" DestinationFolder="$(OutputPath)\resources\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
     </Target>
 
 

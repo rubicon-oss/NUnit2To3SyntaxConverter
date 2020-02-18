@@ -35,5 +35,29 @@ namespace UnitTests
     {
       throw new Exception ("abcdef");
     }
+
+    [Test]
+    public void Test5 ()
+    {
+      Assert.That ("", Text.DoesNotMatch (""));
+      Assert.That ("", Text.Matches (""));
+      Assert.That ("", Text.DoesNotEndWith (""));
+      Assert.That ("", Text.EndsWith (""));
+      Assert.That ("", Text.DoesNotStartWith (""));
+      Assert.That ("", Text.StartsWith (""));
+      Assert.That ("", Text.Contains (""));
+      Assert.That ("", Text.DoesNotContain (""));
+      Assert.That ("", Text.All.Empty);
+    }
+
+    [Test]
+    public void Test6 ()
+    {
+      Assert.That ("", Is.InstanceOfType<string>());
+      Assert.That ("", Is.StringStarting (""));
+      Assert.That ("", Is.StringContaining (""));
+      Assert.That ("", Is.StringEnding (""));
+      Assert.That ("", Is.StringMatching (""));
+    }
   }
 }
