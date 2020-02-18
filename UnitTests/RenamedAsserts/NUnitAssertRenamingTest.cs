@@ -15,8 +15,6 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Text.StartsWith ($1)", "Does.StartWith ($1)")]
     [TestCase ("Text.Contains ($1)", "Does.Contain ($1)")]
     [TestCase ("Text.DoesNotContain ($1)", "Does.Not.Contain ($1)")]
-    [TestCase ("Text.All ($1)", "Has.All ($1)")]
-    
     [TestCase ("Is.InstanceOfType<T> ($1)", "Is.InstanceOf<T> ($1)")]
     [TestCase ("Is.StringStarting ($1)", "Does.StartWith ($1)")]
     [TestCase ("Is.StringContaining ($1)", "Does.Contain ($1)")]
@@ -43,16 +41,17 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
       var actual = new NUnitAssertRenamer().Visit (expression);
       Assert.That (actual.ToFullString(), Is.EqualTo (expected));
     }
-    
+
     [Test]
-    [TestCase("")]
-    [TestCase("Text")]
+    [TestCase ("")]
+    [TestCase ("Text")]
+    [TestCase ("Text.Other ($1)")]
+    [TestCase ("Is.Other ($1)")]
     public void DoesNotRewriteNonChangedAsserts (string toRename)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
-      var actual = new NUnitAssertRenamer().Visit(expression);
-      Assert.That(actual, Is.EqualTo(expression));
+      var actual = new NUnitAssertRenamer().Visit (expression);
+      Assert.That (actual, Is.EqualTo (expression));
     }
-
   }
 }
