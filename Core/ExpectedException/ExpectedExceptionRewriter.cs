@@ -27,14 +27,14 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionRewriter : CSharpSyntaxRewriter
   {
-    private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _attributeRemover;
-    private readonly ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> _methodBodyTransformer;
+    private readonly ExpectedExceptionMethodBodyTransformer _methodBodyTransformer;
+    private readonly ExpectedExceptionAttributeRemover _attributeRemover;
     private readonly SemanticModel _semanticModel;
 
     public ExpectedExceptionRewriter (
         SemanticModel semanticModel,
-        ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> methodBodyTransformer,
-        ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel> attributeRemover)
+        ExpectedExceptionMethodBodyTransformer methodBodyTransformer,
+        ExpectedExceptionAttributeRemover attributeRemover)
     {
       _semanticModel = semanticModel;
       _methodBodyTransformer = methodBodyTransformer;

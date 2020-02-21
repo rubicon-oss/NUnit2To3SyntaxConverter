@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -77,7 +77,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         MatchType = MemberAccess (IdentifierName ("MessageMatch"), "Exact");
 
       if (ExceptionName != null && ExceptionType != null)
-        throw new ArgumentException (
+        throw new InvalidOperationException (
             "Unable to convert ExpectedException attribute, "
             + $"both a name: {ExceptionName.ToString()} and a type: {ExceptionType.ToString()} are specified");
 
@@ -99,16 +99,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
             ExpectedMessage,
             MatchType);
       
-    }
-
-    public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)
-    {
-      if (value is LiteralExpressionSyntax literal)
-        ExceptionName = literal;
-      else if (value is TypeOfExpressionSyntax typeOf)
-        ExceptionType = typeOf;
-
-      return this;
     }
   }
 }

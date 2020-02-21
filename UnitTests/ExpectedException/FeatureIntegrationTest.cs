@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -44,6 +44,16 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (
           rewriter.VisitMethodDeclaration (syntax).ToFullString().Trim(),
           Is.EqualTo (expectedSyntax.ToFullString().Trim()));
+    }
+    
+    private (ExpectedExceptionRewriter, MethodDeclarationSyntax) CreateRewriterFor (string file, string methodName)
+    {
+      var (semantic, root) = CompiledSourceFileProvider.LoadSemanticModel (file);
+      var rewriter = new ExpectedExceptionRewriter (semantic, new ExpectedExceptionMethodBodyTransformer(), new ExpectedExceptionAttributeRemover());
+      var method = root.DescendantNodes()
+          .OfType<MethodDeclarationSyntax>()
+          .Single (syntax => syntax.Identifier.ToString() == methodName);
+      return (rewriter, method);
     }
   }
 }

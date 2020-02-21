@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -66,7 +66,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       return ExpectedMessage == null
           ? throwsWithInstanceOfExpressionType
-          : WithMessage (throwsWithInstanceOfExpressionType, baseIndent);
+          : CreateWithMessage (throwsWithInstanceOfExpressionType, baseIndent);
     }
 
     public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
@@ -77,11 +77,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
 
       return attributeArguments == null
-          ? NoArgExpectedExceptionModel (attribute)
-          : WithArgsExpectedExceptionModel (attribute, attributeArguments.Value);
+          ? CreateNoArgExpectedExceptionModel (attribute)
+          : CreateWithArgsExpectedExceptionModel (attribute, attributeArguments.Value);
     }
 
-    private static ExpectedExceptionModel WithArgsExpectedExceptionModel (
+    private static ExpectedExceptionModel CreateWithArgsExpectedExceptionModel (
         AttributeData attribute,
         SeparatedSyntaxList<AttributeArgumentSyntax> attributeArguments)
     {
@@ -109,16 +109,15 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       return builder.Build (attribute);
     }
 
-    private static ExpectedExceptionModel NoArgExpectedExceptionModel (AttributeData attribute)
+    private static ExpectedExceptionModel CreateNoArgExpectedExceptionModel (AttributeData attribute)
     {
       var builder = new ExpectedExceptionModelBuilder();
       return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
           .Build (attribute);
     }
 
-    private ExpressionSyntax WithMessage (ExpressionSyntax expression, string baseIndent)
+    private ExpressionSyntax CreateWithMessage (ExpressionSyntax expression, string baseIndent)
     {
-      Debug.Assert (ExpectedMessage != null);
       var indent = new string (Formatting.IndentationCharacter, Formatting.IndentationSize);
       var withMessage = MemberAccess (
           expression.WithTrailingTrivia (Whitespace (Formatting.NewLine + baseIndent + indent + indent)),

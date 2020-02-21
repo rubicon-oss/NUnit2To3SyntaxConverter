@@ -30,17 +30,20 @@ namespace NUnit2To3SyntaxConverter.Extensions
   {
     public static InvocationExpressionSyntax SimpleInvocation (ExpressionSyntax expression, IEnumerable<ExpressionSyntax> arguments)
     {
-      var args = arguments.ToList();
-      var methodCallWhiteSpace = args.Count > 0
+      var argumentList = arguments.ToList();
+      var methodCallWhiteSpace = argumentList.Count > 0
           ? Whitespace (" ")
           : Whitespace ("");
-      var argList = SeparatedList (args.Select (args => Argument (args).WithLeadingTrivia()));
+      
+      var argList = SeparatedList (argumentList.Select (argument => Argument (argument).WithLeadingTrivia()));
+      
       return InvocationExpression (expression, ArgumentList (argList).WithLeadingTrivia (methodCallWhiteSpace));
     }
 
     public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)
     {
-      Debug.Assert (accessor.Length > 0);
+      if(accessor.Length < 1)
+        throw new ArgumentException("Accessor list must be at least of length 1.");
       var access = MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, IdentifierName (accessor[0]));
       return accessor.Length == 1
           ? access

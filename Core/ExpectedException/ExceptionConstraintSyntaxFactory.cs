@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -24,7 +24,7 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-  public static class WellKnownExceptions
+  public static class ExceptionConstraintSyntaxFactory
   {
     public static ExpressionSyntax CreateThrowsExceptionConstrainSyntax (string exceptionName)
     {
