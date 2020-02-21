@@ -65,7 +65,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests
           .AddReferences (
               MetadataReference.CreateFromFile (
                   typeof (object).Assembly.Location))
-          .AddReferences (MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.dll"))
+          .AddReferences (MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.v2.6.2.dll"))
           .AddSyntaxTrees (tree);
 
 
