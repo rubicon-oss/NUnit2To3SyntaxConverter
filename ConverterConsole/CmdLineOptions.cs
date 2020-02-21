@@ -17,9 +17,11 @@
 
 using System;
 using CommandLine;
+using JetBrains.Annotations;
 
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
+  [UsedImplicitly]
   public class CmdLineOptions
   {
     public CmdLineOptions (string solutionPath, string? msBuildVersion = null, string? msBuildPath = null)
