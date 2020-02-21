@@ -46,7 +46,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests
 
     public static (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
     {
-      var (model, root) = LoadSemanticModel (file);
+      var (model, root) = LoadCompilationFromFile (file);
       var method = root.DescendantNodes()
           .OfType<MethodDeclarationSyntax>()
           .Single (syntax => syntax.Identifier.ToString() == methodName);
@@ -54,7 +54,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests
       return (methodSymbol, method);
     }
 
-    private static (SemanticModel, SyntaxNode) LoadCompilationFromFile (string file)
+    public static (SemanticModel, SyntaxNode) LoadCompilationFromFile (string file)
       => LoadSemanticModel (File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file));
 
     public static (SemanticModel, SyntaxNode) LoadSemanticModel (string srcText)

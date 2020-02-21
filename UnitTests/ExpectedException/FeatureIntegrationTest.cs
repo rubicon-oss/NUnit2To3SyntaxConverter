@@ -48,7 +48,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     
     private (ExpectedExceptionRewriter, MethodDeclarationSyntax) CreateRewriterFor (string file, string methodName)
     {
-      var (semantic, root) = CompiledSourceFileProvider.LoadSemanticModel (file);
+      var (semantic, root) = CompiledSourceFileProvider.LoadCompilationFromFile (file);
       var rewriter = new ExpectedExceptionRewriter (semantic, new ExpectedExceptionMethodBodyTransformer(), new ExpectedExceptionAttributeRemover());
       var method = root.DescendantNodes()
           .OfType<MethodDeclarationSyntax>()

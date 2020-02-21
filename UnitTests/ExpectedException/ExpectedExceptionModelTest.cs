@@ -152,7 +152,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       Assert.That (
           () => { ExpectedExceptionModel.CreateFromAttributeData (attributeData); },
-          Throws.Exception.With.InstanceOf<ArgumentException>());
+          Throws.Exception.With.InstanceOf<InvalidOperationException>());
     }
   }
 }
