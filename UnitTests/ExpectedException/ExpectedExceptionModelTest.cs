@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -55,9 +55,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExceptionType")]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithExplicitlyNamedExceptionType")]
-    public void UsesCustomExceptionType (string fileName, string methodName)
+    [TestCase ("[ExpectedException(typeof(DivideByZeroException))]")]
+    public void CreateFromAttributeData_UsesCustomExceptionType (string attribute)
     {
       var attributeData = LoadAttribute (fileName, methodName);
 
@@ -70,10 +69,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomUserMessage")]
-    public void UsesUserMessage (string fileName, string methodName)
+    [TestCase ("[ExpectedException (UserMessage = \"test user message\")]")]
+    public void CreateFromAttributeData_UsesUserMessage (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+      var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
       Assert.That (expectedExceptionModel, Is.Not.Null);
@@ -83,17 +82,15 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessage", "test message", "Exact")]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeRegex", "test message regex", "Regex")]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithCustomExpectedMessageAndMatchTypeExact", "test message exact", "Exact")]
+    [TestCase ("[ExpectedException (ExpectedMessage = \"test message\")]", "test message", "Exact")]
+    [TestCase ("[ExpectedException (ExpectedMessage = \"test message regex\", MatchType = MessageMatch.Regex)]", "test message regex", "Regex")]
+    [TestCase ("[ExpectedException (ExpectedMessage = \"test message exact\", MatchType = MessageMatch.Exact)]", "test message exact", "Exact")]
     [TestCase (
-        "resources/ExpectedExceptionFromAttributeTests.cs",
-        "WithCustomExpectedMessageAndMatchTypeStartsWith",
+        "[ExpectedException (ExpectedMessage = \"test message startsWith\", MatchType = MessageMatch.StartsWith)]",
         "test message startsWith",
         "StartsWith")]
     [TestCase (
-        "resources/ExpectedExceptionFromAttributeTests.cs",
-        "WithCustomExpectedMessageAndMatchTypeContains",
+        "[ExpectedException (ExpectedMessage = \"test message contains\", MatchType = MessageMatch.Contains)]",
         "test message contains",
         "Contains")]
     public void UsesExpectedMessage (string fileName, string methodName, string message, string matchType)
@@ -135,11 +132,11 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithExceptionNameStringLiteral")]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithExplicitlyNamedExceptionNameStringLiteral")]
-    public void ExceptionNameIsSetCorrectly (string fileName, string methodName)
+    [TestCase ("[ExpectedException (\"DivideByZeroException\")]")]
+    [TestCase ("[ExpectedException (ExpectedExceptionName = \"DivideByZeroException\")]")]
+    public void CreateFromAttributeData_ExceptionNameIsSetCorrectly (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
 

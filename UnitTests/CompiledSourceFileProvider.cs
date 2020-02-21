@@ -27,6 +27,23 @@ namespace NUnit2To3SyntaxConverter.UnitTests
 {
   public class CompiledSourceFileProvider
   {
+    public static (AttributeData, AttributeSyntax) CompileAttribute (string attribute)
+    {
+      var compilationTemplate =
+          $"namespace TestCompilations {{ using System; using Nunit.Framework; public class TestClass {{ {attribute} public void Test(){{}} }}";
+      var (model, root) = LoadSemanticModel (compilationTemplate);
+      var method = root.DescendantNodes()
+          .OfType<MethodDeclarationSyntax>()
+          .First();
+
+      var attributeSyntax = method
+          .AttributeLists.First()
+          .Attributes.First();
+
+      var attributeData = model.GetDeclaredSymbol (method).GetAttributes().First();
+      return (attributeData, attributeSyntax);
+    }
+
     public static (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
     {
       var (model, root) = LoadSemanticModel (file);
@@ -37,12 +54,12 @@ namespace NUnit2To3SyntaxConverter.UnitTests
       return (methodSymbol, method);
     }
 
-    public static (SemanticModel, SyntaxNode) LoadSemanticModel (string file)
+    private static (SemanticModel, SyntaxNode) LoadCompilationFromFile (string file)
+      => LoadSemanticModel (File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file));
+
+    public static (SemanticModel, SyntaxNode) LoadSemanticModel (string srcText)
     {
-      var src = File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file);
-
-
-      var tree = CSharpSyntaxTree.ParseText (src);
+      var tree = CSharpSyntaxTree.ParseText (srcText);
       var root = (CompilationUnitSyntax) tree.GetRoot();
       var compilation = CSharpCompilation.Create ("TestCompilation")
           .AddReferences (
