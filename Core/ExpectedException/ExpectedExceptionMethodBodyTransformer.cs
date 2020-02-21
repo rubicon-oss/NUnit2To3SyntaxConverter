@@ -25,9 +25,9 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-  public class ExpectedExceptionMethodBodyTransformer : ISyntaxTransformer<MethodDeclarationSyntax, ExpectedExceptionModel>
+  public class ExpectedExceptionMethodBodyTransformer : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
   {
-    public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, ExpectedExceptionModel model)
+    public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
       if (node.Body == null)
         throw new ArgumentException ($"Trying to transform a method without a body: {node.GetLocation()}");
