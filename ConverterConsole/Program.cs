@@ -36,7 +36,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
               _ => Task.FromResult (1));
     }
 
-    public static async Task<int> RunConverter (CmdLineOptions options)
+    private static async Task<int> RunConverter (CmdLineOptions options)
     {
       var msBuild = LocateMsBuild (options);
       MSBuildLocator.RegisterInstance (msBuild);

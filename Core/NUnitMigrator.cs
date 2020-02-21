@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -50,7 +50,7 @@ namespace NUnit2To3SyntaxConverter
       await Task.WhenAll (tasks);
     }
 
-    public async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
+    private async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
     {
       var newDoc = document;
 
@@ -60,7 +60,7 @@ namespace NUnit2To3SyntaxConverter
       return document.WithSyntaxRoot ((await newDoc.GetSyntaxRootAsync())!);
     }
 
-    public async Task WriteBack (Document original, Document newDocument)
+    private async Task WriteBack (Document original, Document newDocument)
     {
       var originalRootNode = await original.GetSyntaxRootAsync();
       var newRootNode = await newDocument.GetSyntaxRootAsync();
