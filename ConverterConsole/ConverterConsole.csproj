@@ -5,6 +5,7 @@
         <RootNamespace>NUnit2To3SyntaxConverter.ConverterConsole</RootNamespace>
         <LangVersion>8</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.7.82" />

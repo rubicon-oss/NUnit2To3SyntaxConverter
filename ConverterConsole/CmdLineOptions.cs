@@ -22,7 +22,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
   public class CmdLineOptions
   {
-    public CmdLineOptions (string solutionPath, string msBuildVersion = null, string msBuildPath = null)
+    public CmdLineOptions (string solutionPath, string? msBuildVersion = null, string? msBuildPath = null)
     {
       SolutionPath = solutionPath;
       MsBuildVersion = msBuildVersion;
@@ -33,9 +33,9 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
     public string SolutionPath { get; }
 
     [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
-    public string MsBuildVersion { get; }
+    public string? MsBuildVersion { get; }
 
     [Option ("msbuildpath", Required = false, MetaValue = "PATH")]
-    public string MsBuildPath { get; }
+    public string? MsBuildPath { get; }
   }
 }

@@ -25,11 +25,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   internal class ExpectedExceptionModelBuilder
   {
-    private ExpressionSyntax ExceptionType { get; set; }
-    private ExpressionSyntax ExceptionName { get; set; }
-    private ExpressionSyntax UserMessage { get; set; }
-    private ExpressionSyntax ExpectedMessage { get; set; }
-    private ExpressionSyntax MatchType { get; set; }
+    private ExpressionSyntax? ExceptionType { get; set; }
+    private ExpressionSyntax? ExceptionName { get; set; }
+    private ExpressionSyntax? UserMessage { get; set; }
+    private ExpressionSyntax? ExpectedMessage { get; set; }
+    private ExpressionSyntax? MatchType { get; set; }
 
     public ExpectedExceptionModelBuilder WithExceptionType (ExpressionSyntax exceptionType)
     {
@@ -76,13 +76,19 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         var value = nameLiteral.Token.ValueText;
         ExceptionType = TypeOfExpression (IdentifierName (value));
       }
+      
+      if(attributeData == null)
+        throw new InvalidOperationException($"Required field {nameof(attributeData)} is null.");
 
+      ExceptionType ??= IdentifierName ("Exception");
+      
       return new ExpectedExceptionModel (
-          attributeData,
-          ExceptionType,
-          UserMessage,
-          ExpectedMessage,
-          MatchType);
+            attributeData,
+            ExceptionType,
+            UserMessage,
+            ExpectedMessage,
+            MatchType);
+      
     }
 
     public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)

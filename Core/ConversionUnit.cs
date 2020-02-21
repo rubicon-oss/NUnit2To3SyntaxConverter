@@ -37,17 +37,17 @@ namespace NUnit2To3SyntaxConverter
       _semanticModel = semanticModel;
     }
 
-    public static async Task<ConversionUnit> CreateFromDocument (Document document)
+    public static async Task<ConversionUnit?> CreateFromDocument (Document document)
     {
       if (!SupportsDocument (document)) return null;
 
       var syntaxTree = (await document.GetSyntaxTreeAsync())?.GetRoot();
       var semanticModel = await document.GetSemanticModelAsync();
-      Debug.Assert (syntaxTree != null);
-      Debug.Assert (semanticModel != null);
-
-
-      return new ConversionUnit (document, syntaxTree, semanticModel);
+      
+      if(syntaxTree == null || semanticModel == null)
+        throw new InvalidOperationException("Document could not be parsed.");
+      
+      return new ConversionUnit (document, syntaxTree!, semanticModel!);
     }
 
     private static bool SupportsDocument (Document document)

@@ -33,9 +33,9 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public ExpectedExceptionModel (
         AttributeData attributeData,
         ExpressionSyntax exceptionType,
-        ExpressionSyntax userMessage,
-        ExpressionSyntax expectedMessage,
-        ExpressionSyntax matchType)
+        ExpressionSyntax? userMessage,
+        ExpressionSyntax? expectedMessage,
+        ExpressionSyntax? matchType)
     {
       _attributeData = attributeData;
       ExceptionType = exceptionType;
@@ -46,14 +46,15 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
 
     public ExpressionSyntax ExceptionType { get; }
-    public ExpressionSyntax UserMessage { get; }
-    public ExpressionSyntax MatchType { get; }
-    public ExpressionSyntax ExpectedMessage { get; }
+    public ExpressionSyntax? UserMessage { get; }
+    public ExpressionSyntax? MatchType { get; }
+    public ExpressionSyntax? ExpectedMessage { get; }
 
 
     public async Task<AttributeSyntax> GetAttributeSyntax ()
     {
-      return await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax;
+      return await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax 
+             ?? throw new InvalidOperationException($"member {_attributeData} is not a AttributeSyntax");
     }
 
     public ExpressionSyntax AsConstraintExpression (string baseIndent)
@@ -72,8 +73,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
     {
-      var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
-      Debug.Assert (attributeSyntax != null);
+      var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax
+          ?? throw new ArgumentException($"{nameof(attribute)} does not support a syntax tree");
 
       var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
 
@@ -89,10 +90,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var builder = new ExpectedExceptionModelBuilder();
       foreach (var attributeArgument in attributeArguments)
       {
-        var value = attributeArgument.Expression;
+        var value = attributeArgument.Expression 
+              ?? throw new InvalidOperationException($"Attribute argument {attributeArgument} does not have a value");
+        
         var namedArgumentName = attributeArgument.NameColon?.Name
                                 ?? attributeArgument.NameEquals?.Name;
-        Debug.Assert (value != null);
 
         builder = namedArgumentName?.ToString() switch
         {
@@ -141,7 +143,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
           withMessageMatchType,
           new[]
           {
-              ExpectedMessage.WithLeadingTrivia (Whitespace (""))
+              ExpectedMessage.WithLeadingTrivia (Whitespace (""))!
                   .WithIndentation (indent: baseIndent + indent + indent + indent + indent)
           });
 

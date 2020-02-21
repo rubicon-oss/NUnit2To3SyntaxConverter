@@ -28,9 +28,9 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
   {
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
-      var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult();
-      Debug.Assert (toRemove != null);
-
+      var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult()
+          ?? throw new ArgumentException ($"Unable to get syntax tree of syntax node {nameof(node)}.\r\nNode: ({node.ToString()})");
+      
       var newLists =
           new SyntaxList<AttributeListSyntax> (
               node.AttributeLists

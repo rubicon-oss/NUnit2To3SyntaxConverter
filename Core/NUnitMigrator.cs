@@ -57,7 +57,7 @@ namespace NUnit2To3SyntaxConverter
       foreach (var converter in converters)
         newDoc = newDoc.WithSyntaxRoot (await converter.Convert (newDoc));
 
-      return document.WithSyntaxRoot (await newDoc.GetSyntaxRootAsync());
+      return document.WithSyntaxRoot ((await newDoc.GetSyntaxRootAsync())!);
     }
 
     public async Task WriteBack (Document original, Document newDocument)

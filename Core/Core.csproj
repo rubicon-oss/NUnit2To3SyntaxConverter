@@ -5,6 +5,7 @@
         <RootNamespace>NUnit2To3SyntaxConverter</RootNamespace>
         <LangVersion>8</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
