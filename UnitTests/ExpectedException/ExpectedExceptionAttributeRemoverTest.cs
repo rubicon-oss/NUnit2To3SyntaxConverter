@@ -27,16 +27,17 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
   public class RemoveExpectedAttributeTest
   {
+    private const string c_testCaseFile = "resources/RewriteMethodBodyTests.cs";
+    
     [Test]
-    [TestCase ("resources/RewriteMethodBodyTests.cs", "MultipleAttributesInAttributeListFirst")]
-    [TestCase ("resources/RewriteMethodBodyTests.cs", "MultipleAttributesInAttributeListLast")]
-    [TestCase ("resources/RewriteMethodBodyTests.cs", "MultipleAttributesInAttributeListFirst")]
-    [TestCase ("resources/RewriteMethodBodyTests.cs", "MultipleAttributesInAttributeListLast")]
-    public void RemovesSingleAttribute (string fileName, string methodName)
+    [TestCase ("MultipleAttributesInAttributeListFirst")]
+    [TestCase ("MultipleAttributesInAttributeListLast")]
+    [TestCase ("MultipleAttributesInAttributeListFirst")]
+    [TestCase ("MultipleAttributesInAttributeListLast")]
+    public void ExpectedExceptionAttributeRemover_RemovesSingleAttribute (string methodName)
     {
-      var (methodSymbol, methodSyntax) = CompiledSourceFileProvider.LoadMethod (fileName, methodName);
+      var (_, methodSyntax) = CompiledSourceFileProvider.LoadMethod (c_testCaseFile, methodName);
       var model = new Mock<IExpectedExceptionModel>();
-
       model.Setup (m => m.GetAttributeSyntax())
           .Returns (
               Task<SyntaxNode>.FromResult (
