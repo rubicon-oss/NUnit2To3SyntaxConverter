@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -41,9 +41,9 @@ namespace NUnit2To3SyntaxConverter
       }
 
       var tasks = solution.Projects
-          .Where (project => _options.ProjectFilter.Invoke (project))
+          .Where (_options.ProjectFilter)
           .SelectMany (project => project.Documents)
-          .Where (document => _options.SourceFileFilter.Invoke (document))
+          .Where (_options.SourceFileFilter)
           .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
           .Select (async document => WriteBack ((await document).Original, (await document).New));
 
@@ -62,9 +62,9 @@ namespace NUnit2To3SyntaxConverter
 
     public async Task WriteBack (Document original, Document newDocument)
     {
-      var oldRootNode = await original.GetSyntaxRootAsync();
+      var originalRootNode = await original.GetSyntaxRootAsync();
       var newRootNode = await newDocument.GetSyntaxRootAsync();
-      if (oldRootNode == newRootNode) return;
+      if (originalRootNode == newRootNode) return;
 
       try
       {
@@ -73,9 +73,9 @@ namespace NUnit2To3SyntaxConverter
 
         newRootNode!.WriteTo (writer);
       }
-      catch (Exception ex)
+      catch (IOException ex)
       {
-        throw new InvalidOperationException (string.Format ("Unable to write source file '{0}'.", newDocument.FilePath), ex);
+        throw new InvalidOperationException ($"Unable to write source file '{newDocument.FilePath}'.", ex);
       }
     }
   }
