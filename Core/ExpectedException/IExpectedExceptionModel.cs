@@ -27,8 +27,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     ExpressionSyntax? UserMessage { get; }
     ExpressionSyntax? MatchType { get; }
     ExpressionSyntax? ExpectedMessage { get; }
+    
     Task<AttributeSyntax> GetAttributeSyntax ();
-
     ExpressionSyntax AsConstraintExpression (string baseIndent);
   }
 }

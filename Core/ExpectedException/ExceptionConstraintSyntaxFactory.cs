@@ -29,13 +29,15 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public static ExpressionSyntax CreateThrowsExceptionConstrainSyntax (string exceptionName)
     {
       var exceptionNameWithoutSystemNs = Regex.Replace (exceptionName, "^(System.)", "");
-      return IsWellKnownException (exceptionNameWithoutSystemNs)
-          ? (ExpressionSyntax) MemberAccess (IdentifierName ("Throws"), exceptionNameWithoutSystemNs)
-          : SimpleInvocation (
-              MemberAccess (
-                  IdentifierName ("Throws"),
-                  GenericName (Identifier ("InstanceOf"), TypeArgumentList (SeparatedList (new[] { (TypeSyntax) IdentifierName (exceptionName) })))),
-              new ExpressionSyntax [0]);
+
+      if (IsWellKnownException (exceptionNameWithoutSystemNs))
+        return MemberAccess (IdentifierName ("Throws"), exceptionNameWithoutSystemNs);
+      
+      return SimpleInvocation (
+          MemberAccess (
+              IdentifierName ("Throws"),
+              GenericName (Identifier ("InstanceOf"), TypeArgumentList (SeparatedList (new[] { (TypeSyntax) IdentifierName (exceptionName) })))),
+          new ExpressionSyntax [0]);
     }
 
     private static bool IsWellKnownException (string exceptionName)
