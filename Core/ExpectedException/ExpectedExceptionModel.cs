@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -63,7 +63,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
                       ?.Type.ToString()
                       ?? nameof(Exception);
 
-      var throwsWithInstanceOfExpressionType = WellKnownExceptions.ThrowsExceptionConstrainSyntax (exception)
+      var throwsWithInstanceOfExpressionType = ExceptionConstraintSyntaxFactory.CreateThrowsExceptionConstrainSyntax (exception)
           .WithLeadingTrivia (Whitespace (baseIndent));
 
       return ExpectedMessage == null

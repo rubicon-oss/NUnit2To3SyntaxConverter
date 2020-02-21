@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -27,19 +27,13 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
-  public class ParseExpectedExceptionModelTest
+  public class ExpectedExceptionModelTest
   {
-    private AttributeData LoadAttribute (string fileName, string methodName)
-    {
-      var (methodSymbol, _) = CompiledSourceFileProvider.LoadMethod (fileName, methodName);
-      return methodSymbol.GetAttributes().First();
-    }
-
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "SimpleBaseCase")]
-    public async Task NoArgsAttribute (string fileName, string methodName)
+    [TestCase ("[ExpectedException]")]
+    public async Task CreateFromAttributeData_NoArgsAttribute (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+      var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
 
@@ -58,7 +52,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("[ExpectedException(typeof(DivideByZeroException))]")]
     public void CreateFromAttributeData_UsesCustomExceptionType (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+      var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
 
@@ -93,9 +87,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
         "[ExpectedException (ExpectedMessage = \"test message contains\", MatchType = MessageMatch.Contains)]",
         "test message contains",
         "Contains")]
-    public void UsesExpectedMessage (string fileName, string methodName, string message, string matchType)
+    public void CreateFromAttributeData_UsesExpectedMessage (string attribute, string message, string matchType)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+      var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
 
@@ -109,10 +103,15 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "WithAllCustomFields")]
-    public void UsesAllCustomFields (string fileName, string methodName)
+    [TestCase (
+        "[ExpectedException ("
+        + "typeof(DivideByZeroException), "
+        + "ExpectedMessage = \"test message\", "
+        + "UserMessage = \"test user message\", "
+        + "MatchType = MessageMatch.Contains)]")]
+    public void CreateFromAttributeData_UsesAllCustomFields (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+      var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       var expectedExceptionModel = ExpectedExceptionModel.CreateFromAttributeData (attributeData);
 
@@ -146,10 +145,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    [TestCase ("resources/ExpectedExceptionFromAttributeTests.cs", "DoubleSpecifiedException")]
-    public void ThrowsWhenTypeAndNameIsSpecified (string fileName, string methodName)
+    [TestCase ("[ExpectedException (typeof(DivideByZeroException), ExpectedExceptionName = \"DivideByZeroException\")]")]
+    public void CreateFromAttributeData_ThrowsWhenTypeAndNameIsSpecified (string attribute)
     {
-      var attributeData = LoadAttribute (fileName, methodName);
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
 
       Assert.That (
           () => { ExpectedExceptionModel.CreateFromAttributeData (attributeData); },

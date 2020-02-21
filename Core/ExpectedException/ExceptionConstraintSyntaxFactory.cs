@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -26,7 +26,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public static class WellKnownExceptions
   {
-    public static ExpressionSyntax ThrowsExceptionConstrainSyntax (string exceptionName)
+    public static ExpressionSyntax CreateThrowsExceptionConstrainSyntax (string exceptionName)
     {
       var exceptionNameWithoutSystemNs = Regex.Replace (exceptionName, "^(System.)", "");
       return IsWellKnownException (exceptionNameWithoutSystemNs)

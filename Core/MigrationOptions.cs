@@ -1,4 +1,4 @@
-#region copyright
+﻿#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -23,7 +23,7 @@ namespace NUnit2To3SyntaxConverter
 {
   public class MigrationOptions
   {
-    private static readonly Encoding DefaultEncoding = Encoding.Default;
+    private static readonly Encoding s_defaultEncoding = Encoding.Default;
 
     public static readonly MigrationOptions DefaultOptions = new MigrationOptions();
 
@@ -31,6 +31,6 @@ namespace NUnit2To3SyntaxConverter
 
     public Func<Document, bool> SourceFileFilter { get; } = _ => true;
 
-    public Encoding Encoding { get; set; } = DefaultEncoding;
+    public Encoding Encoding { get; } = s_defaultEncoding;
   }
 }
