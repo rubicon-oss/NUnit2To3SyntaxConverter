@@ -19,7 +19,7 @@ namespace UnitTests
       Console.WriteLine();
     }
     
-    [ExpectedException (typeof (ArgumentNullException)]
+    [ExpectedException (typeof (ArgumentException)]
     public void WithWellKnownExceptionType ()
     {
       Console.WriteLine();

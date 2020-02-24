@@ -25,7 +25,7 @@ namespace UnitTests
     {
       Assert.That (
           () => Console.WriteLine(),
-          Throws.ArgumentNullException);
+          Throws.ArgumentException);
     }
 
     public void WithCustomExpectedMessage ()

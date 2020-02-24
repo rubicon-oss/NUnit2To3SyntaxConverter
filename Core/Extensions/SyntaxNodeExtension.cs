@@ -34,7 +34,7 @@ namespace NUnit2To3SyntaxConverter.Extensions
     public static T WithIndentation<T> (this T _this, string newLine = Formatting.NewLine, string indent = "  ")
         where T : SyntaxNode
     {
-      var node = (T) new IndentationNodeVisitor (newLine, indent).Visit (_this);
+      var node = (T) new IndentationNodeVisitor (indent).Visit (_this);
       return node.WithLeadingTrivia (node.GetLeadingTrivia().Add (Whitespace (indent)));
     }
 
@@ -68,11 +68,9 @@ namespace NUnit2To3SyntaxConverter.Extensions
     private class IndentationNodeVisitor : CSharpSyntaxRewriter
     {
       private readonly string _indentation;
-      private readonly string _newLine;
 
-      public IndentationNodeVisitor (string newLine, string indentation)
+      public IndentationNodeVisitor (string indentation)
       {
-        _newLine = newLine;
         _indentation = indentation;
       }
 
