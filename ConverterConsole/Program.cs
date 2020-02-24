@@ -28,6 +28,18 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
   internal class Program
   {
+    private class ConsoleProgressReporter : IProgress<ProjectLoadProgress>
+    {
+      public void Report (ProjectLoadProgress loadProgress)
+      {
+        var projectDisplay = Path.GetFileName (loadProgress.FilePath);
+        if (loadProgress.TargetFramework != null)
+          projectDisplay += $" ({loadProgress.TargetFramework})";
+
+        Console.WriteLine ($"{loadProgress.Operation,-15} {loadProgress.ElapsedTime,-15:m\\:ss\\.fffffff} {projectDisplay}");
+      }
+    }
+
     public static async Task Main (string[] args)
     {
       await Parser.Default.ParseArguments<CmdLineOptions> (args)
@@ -53,15 +65,14 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
     private static VisualStudioInstance? LocateMsBuild (CmdLineOptions options)
     {
-      
-      var queriedInstances = QueryVisualStudioInstances(options).ToList();
-      
+      var queriedInstances = QueryVisualStudioInstances (options).ToList();
+
       if (queriedInstances.Count <= 0)
       {
         DisplayNoMsBuildFoundError();
         return null;
       }
-      
+
       if (queriedInstances.Count > 1)
       {
         DisplayMoreThanOneMsBuildFoundError (queriedInstances);
@@ -113,18 +124,6 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
         Console.Error.WriteLine ($"        Name        : {allInstances[i].Name}");
         Console.Error.WriteLine ($"        Version     : {allInstances[i].Version}");
         Console.Error.WriteLine ($"        MsBuildPath : {allInstances[i].MSBuildPath}");
-      }
-    }
-
-    private class ConsoleProgressReporter : IProgress<ProjectLoadProgress>
-    {
-      public void Report (ProjectLoadProgress loadProgress)
-      {
-        var projectDisplay = Path.GetFileName (loadProgress.FilePath);
-        if (loadProgress.TargetFramework != null)
-          projectDisplay += $" ({loadProgress.TargetFramework})";
-
-        Console.WriteLine ($"{loadProgress.Operation,-15} {loadProgress.ElapsedTime,-15:m\\:ss\\.fffffff} {projectDisplay}");
       }
     }
   }
