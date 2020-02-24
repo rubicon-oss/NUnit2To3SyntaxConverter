@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,34 +36,37 @@ namespace NUnit2To3SyntaxConverter
 
     public async Task Migrate (Solution solution)
     {
-      foreach (var project in solution.Projects)
-      {
-        var comp = await project.GetCompilationAsync();
-      }
 
-      var tasks = solution.Projects
-          .Where (_options.ProjectFilter)
-          .SelectMany (project => project.Documents)
-          .Where (_options.SourceFileFilter)
-          .Select (async document => (Original: document, New: await ConvertDocument (document, new ExpectedExceptionDocumentConverter())))
-          .Select (async document => WriteBack ((await document).Original, (await document).New));
+      var tasks = GetDocuments(solution)
+          .Select (async document => await ConvertDocument (document, new ExpectedExceptionDocumentConverter()))
+          .Select (async documentResult => WriteBack (await documentResult));
 
       await Task.WhenAll (tasks);
     }
 
-    private async Task<Document> ConvertDocument (Document document, params IDocumentConverter[] converters)
+    private IEnumerable<Document> GetDocuments (Solution solution)
+    {
+      return solution.Projects
+          .Where (_options.ProjectFilter)
+          .SelectMany (project => project.Documents)
+          .Where (_options.SourceFileFilter);
+    }
+
+    private async Task<(Document, Document)> ConvertDocument (Document document, params IDocumentConverter[] converters)
     {
       var newDoc = document;
 
       foreach (var converter in converters)
         newDoc = newDoc.WithSyntaxRoot (await converter.Convert (newDoc));
 
-      return document.WithSyntaxRoot ((await newDoc.GetSyntaxRootAsync())!);
+      return (document, document.WithSyntaxRoot ((await newDoc.GetSyntaxRootAsync())!));
     }
 
-    private async Task WriteBack (Document original, Document newDocument)
+    private async Task WriteBack ((Document , Document) documentResult)
     {
-      var originalRootNode = await original.GetSyntaxRootAsync();
+      var (originalDocument, newDocument) = documentResult;
+      
+      var originalRootNode = await originalDocument.GetSyntaxRootAsync();
       var newRootNode = await newDocument.GetSyntaxRootAsync();
       if (originalRootNode == newRootNode) return;
 
