@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -154,5 +155,72 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           () => { ExpectedExceptionModel.CreateFromAttributeData (attributeData); },
           Throws.Exception.With.InstanceOf<InvalidOperationException>());
     }
+    
+    [Test]
+    [TestCase ("[ExpectedException]")]
+    public void ConvertToConstraint_ConvertsForSimpleExceptionCase (string attribute)
+    {
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
+        IExpectedExceptionModel expectedException 
+                = new ExpectedExceptionModel(attributeData, IdentifierName("Exception"), null, null, null);
+
+        var constraint = expectedException.AsConstraintExpression ("");
+        
+        Assert.That(constraint, Is.EquivalentTo(ParseExpression("Throws.Exception")));
+    }
+    
+    [Test]
+    [TestCase ("[ExpectedException(typeof(TestException))]")]
+    public void ConvertToConstraint_ConvertsForCustomException (string attribute)
+    {
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
+        IExpectedExceptionModel expectedException 
+                = new ExpectedExceptionModel(attributeData, ParseExpression ("typeof(TestException)"), null, null, null);
+
+        var constraint = expectedException.AsConstraintExpression ("");
+        
+        Assert.That(constraint, Is.EquivalentTo(ParseExpression("Throws.InstanceOf<TestException>()")));
+    }
+    
+    [Test]
+    [TestCase ("[ExpectedException(typeof(InvalidOperationException))]")]
+    public void ConvertToConstraint_ConvertsForCustomWellKnownException (string attribute)
+    {
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
+        IExpectedExceptionModel expectedException 
+                = new ExpectedExceptionModel(attributeData, ParseExpression ("typeof(InvalidOperationException)"), null, null, null);
+
+        var constraint = expectedException.AsConstraintExpression ("");
+        
+        Assert.That(constraint, Is.EquivalentTo(ParseExpression("Throws.InvalidOperationException")));
+    }
+    
+    [Test]
+    [TestCase ("[ExpectedException(ExpectedMessage = \"Test Message\")]")]
+    public void ConvertToConstraint_ConvertsExpectedExceptionMessage (string attribute)
+    {
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
+        IExpectedExceptionModel expectedException 
+                = new ExpectedExceptionModel(attributeData, ParseExpression ("Exception"), null, ParseExpression("\"Test Message\""), null);
+
+        var constraint = expectedException.AsConstraintExpression ("");
+        
+        Assert.That(constraint, Is.EquivalentTo(ParseExpression("Throws.Exception.With.Message.EqualTo(\"Test Message\")")));
+    }
+    
+    [Test]
+    [TestCase ("[ExpectedException(ExpectedMessage = \"Test Message\"), MatchType = MessageMatch.Regex]")]
+    public void ConvertToConstraint_ConvertsExpectedExceptionMessageWithCustomMatcher (string attribute)
+    {
+        var (attributeData, _) = CompiledSourceFileProvider.CompileAttribute (attribute);
+        IExpectedExceptionModel expectedException 
+                = new ExpectedExceptionModel(attributeData, ParseExpression ("Exception"), null, ParseExpression("\"Test Message\""), ParseExpression("MessageMatch.Regex"));
+
+        var constraint = expectedException.AsConstraintExpression ("");
+        
+        Assert.That(constraint, Is.EquivalentTo(ParseExpression("Throws.Exception.With.Message.Matches(\"Test Message\")")));
+    }
+
+
   }
 }
