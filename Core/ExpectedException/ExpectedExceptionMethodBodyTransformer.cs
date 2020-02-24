@@ -31,7 +31,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     {
       if (node.Body == null)
         throw new ArgumentException ($"Trying to transform a method without a body: {node.GetLocation()}");
-      
+
       var indentation = Whitespace (new string (' ', 2));
       var baseIndentation = node.Body.GetLeadingTrivia();
       var bodyIndentation = baseIndentation.Add (indentation);

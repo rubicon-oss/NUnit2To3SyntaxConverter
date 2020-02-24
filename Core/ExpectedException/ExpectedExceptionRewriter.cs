@@ -27,8 +27,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionRewriter : CSharpSyntaxRewriter
   {
-    private readonly ExpectedExceptionMethodBodyTransformer _methodBodyTransformer;
     private readonly ExpectedExceptionAttributeRemover _attributeRemover;
+    private readonly ExpectedExceptionMethodBodyTransformer _methodBodyTransformer;
     private readonly SemanticModel _semanticModel;
 
     public ExpectedExceptionRewriter (

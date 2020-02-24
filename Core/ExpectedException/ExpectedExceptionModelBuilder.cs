@@ -60,7 +60,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       MatchType = matchType;
       return this;
     }
-    
+
     public ExpectedExceptionModelBuilder WithExceptionTypeOrName (ExpressionSyntax value)
     {
       if (value is LiteralExpressionSyntax literal)
@@ -70,7 +70,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       return this;
     }
-    
+
     public ExpectedExceptionModel Build (AttributeData attributeData)
     {
       if (MatchType == null && ExpectedMessage != null)
@@ -86,19 +86,18 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         var value = nameLiteral.Token.ValueText;
         ExceptionType = TypeOfExpression (IdentifierName (value));
       }
-      
-      if(attributeData == null)
-        throw new InvalidOperationException($"Required field {nameof(attributeData)} is null.");
+
+      if (attributeData == null)
+        throw new InvalidOperationException ($"Required field {nameof(attributeData)} is null.");
 
       ExceptionType ??= IdentifierName ("Exception");
-      
+
       return new ExpectedExceptionModel (
-            attributeData,
-            ExceptionType,
-            UserMessage,
-            ExpectedMessage,
-            MatchType);
-      
+          attributeData,
+          ExceptionType,
+          UserMessage,
+          ExpectedMessage,
+          MatchType);
     }
   }
 }

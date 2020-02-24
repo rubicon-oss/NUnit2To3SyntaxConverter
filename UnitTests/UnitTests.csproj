@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-   
+
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
         <RootNamespace>NUnit2To3SyntaxConverter.Unittests</RootNamespace>
@@ -30,6 +30,7 @@
     </ItemGroup>
 
     <Target Name="CustomAfterBuild" AfterTargets="AfterBuild">
-        <Copy SourceFiles="@(_Resources)" DestinationFolder="$(OutputPath)\resources\%(RecursiveDir)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
+        <Copy SourceFiles="@(_Resources)" DestinationFolder="$(OutputPath)\resources\%(RecursiveDir)" SkipUnchangedFiles="true"
+              OverwriteReadOnlyFiles="true" Retries="3" RetryDelayMilliseconds="300" />
     </Target>
 </Project>

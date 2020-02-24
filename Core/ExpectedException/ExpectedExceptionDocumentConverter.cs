@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
@@ -27,10 +26,10 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public async Task<SyntaxNode> Convert (Document document)
     {
       var semanticModel = await document.GetSemanticModelAsync()
-          ?? throw new ArgumentException("Document does not support a semantic model.");
+                          ?? throw new ArgumentException ("Document does not support a semantic model.");
       var syntaxRoot = await document.GetSyntaxRootAsync()
-          ?? throw new ArgumentException("Document does not support a syntax tree.");
-      
+                       ?? throw new ArgumentException ("Document does not support a syntax tree.");
+
       var rewriter = new ExpectedExceptionRewriter (
           semanticModel,
           new ExpectedExceptionMethodBodyTransformer(),

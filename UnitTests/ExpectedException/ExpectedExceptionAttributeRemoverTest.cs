@@ -29,7 +29,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
   public class RemoveExpectedAttributeTest
   {
     private const string c_testCaseFile = "resources/RemoveExpectedAttributeTestCases.cs";
-    
+
     [Test]
     [TestCase ("MultipleAttributesInAttributeListFirst")]
     [TestCase ("MultipleAttributesInAttributeListLast")]

@@ -32,7 +32,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       if (IsWellKnownException (exceptionNameWithoutSystemNs))
         return MemberAccess (IdentifierName ("Throws"), exceptionNameWithoutSystemNs);
-      
+
       return SimpleInvocation (
           MemberAccess (
               IdentifierName ("Throws"),

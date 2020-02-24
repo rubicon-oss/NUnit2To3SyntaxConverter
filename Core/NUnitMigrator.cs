@@ -36,8 +36,7 @@ namespace NUnit2To3SyntaxConverter
 
     public async Task Migrate (Solution solution)
     {
-
-      var tasks = GetDocuments(solution)
+      var tasks = GetDocuments (solution)
           .Select (async document => await ConvertDocument (document, new ExpectedExceptionDocumentConverter()))
           .Select (async documentResult => WriteBack (await documentResult));
 
@@ -62,10 +61,10 @@ namespace NUnit2To3SyntaxConverter
       return (document, document.WithSyntaxRoot ((await newDoc.GetSyntaxRootAsync())!));
     }
 
-    private async Task WriteBack ((Document , Document) documentResult)
+    private async Task WriteBack ((Document, Document) documentResult)
     {
       var (originalDocument, newDocument) = documentResult;
-      
+
       var originalRootNode = await originalDocument.GetSyntaxRootAsync();
       var newRootNode = await newDocument.GetSyntaxRootAsync();
       if (originalRootNode == newRootNode) return;

@@ -41,7 +41,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     {
       var (rewriter, syntax) = CreateRewriterFor (c_testCasesSourceFileName, method);
       var expectedSyntax = CompiledSourceFileProvider.LoadMethod (c_expectedTestResultsSourceFileName, method);
-      
+
       var rewrittenMethodSyntax = rewriter.VisitMethodDeclaration (syntax);
 
       Assert.That (rewrittenMethodSyntax.ToFullString().Trim(), Is.EqualTo (expectedSyntax.ToFullString().Trim()));

@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,11 +28,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
   public class ExpectedExceptionModel : IExpectedExceptionModel
   {
     private readonly AttributeData _attributeData;
-
-    public ExpressionSyntax ExceptionType { get; }
-    public ExpressionSyntax? UserMessage { get; }
-    public ExpressionSyntax? MatchType { get; }
-    public ExpressionSyntax? ExpectedMessage { get; }
 
     public ExpectedExceptionModel (
         AttributeData attributeData,
@@ -48,6 +42,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       MatchType = matchType;
       ExpectedMessage = expectedMessage;
     }
+
+    public ExpressionSyntax ExceptionType { get; }
+    public ExpressionSyntax? UserMessage { get; }
+    public ExpressionSyntax? MatchType { get; }
+    public ExpressionSyntax? ExpectedMessage { get; }
 
     public async Task<AttributeSyntax> GetAttributeSyntax ()
     {

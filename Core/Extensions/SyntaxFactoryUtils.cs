@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -34,16 +33,16 @@ namespace NUnit2To3SyntaxConverter.Extensions
       var methodCallWhiteSpace = argumentList.Count > 0
           ? Whitespace (" ")
           : Whitespace ("");
-      
+
       var argList = SeparatedList (argumentList.Select (argument => Argument (argument).WithLeadingTrivia()));
-      
+
       return InvocationExpression (expression, ArgumentList (argList).WithLeadingTrivia (methodCallWhiteSpace));
     }
 
     public static MemberAccessExpressionSyntax MemberAccess (ExpressionSyntax expression, params string[] accessor)
     {
-      if(accessor.Length < 1)
-        throw new ArgumentException("Accessor list must be at least of length 1.");
+      if (accessor.Length < 1)
+        throw new ArgumentException ("Accessor list must be at least of length 1.");
       var access = MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, expression, IdentifierName (accessor[0]));
       return accessor.Length == 1
           ? access
