@@ -4,7 +4,7 @@ using NUnit.Framework.Constraints;
 
 namespace UnitTests
 {
-    public class RewriteMethodBodyTests
+    public class RemoveExpectedAttributeTestCases
     {
         [Test]
         [ExpectedException]

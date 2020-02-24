@@ -20,14 +20,15 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
+using NUnit2To3SyntaxConverter.Unittests.Helpers;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
   public class FeatureIntegrationTest
   {
-    private const string c_testCases = "/resources/ExpectedExceptionIntegrationTestCases.cs";
-    private const string c_expectedTestResults = "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs";
-    
+    private const string c_testCasesSourceFileName = "/resources/ExpectedExceptionIntegrationTestCases.cs";
+    private const string c_expectedTestResultsSourceFileName = "/resources/ExpectedExceptionIntegrationTestCasesExpected.cs";
+
     [Test]
     [TestCase ("SimpleBaseCase")]
     [TestCase ("WithCustomExceptionType")]
@@ -38,14 +39,14 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("WithMultiLineString")]
     public void ExpectedExceptionRewritesToExpectedCases (string method)
     {
-      var (rewriter, syntax) = CreateRewriterFor (c_testCases, method);
-      var (_, expectedSyntax) = CompiledSourceFileProvider.LoadMethod (c_expectedTestResults, method);
+      var (rewriter, syntax) = CreateRewriterFor (c_testCasesSourceFileName, method);
+      var expectedSyntax = CompiledSourceFileProvider.LoadMethod (c_expectedTestResultsSourceFileName, method);
+      
+      var rewrittenMethodSyntax = rewriter.VisitMethodDeclaration (syntax);
 
-      Assert.That (
-          rewriter.VisitMethodDeclaration (syntax).ToFullString().Trim(),
-          Is.EqualTo (expectedSyntax.ToFullString().Trim()));
+      Assert.That (rewrittenMethodSyntax.ToFullString().Trim(), Is.EqualTo (expectedSyntax.ToFullString().Trim()));
     }
-    
+
     private (ExpectedExceptionRewriter, MethodDeclarationSyntax) CreateRewriterFor (string file, string methodName)
     {
       var (semantic, root) = CompiledSourceFileProvider.LoadCompilationFromFile (file);

@@ -23,11 +23,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 
-namespace NUnit2To3SyntaxConverter.UnitTests
+namespace NUnit2To3SyntaxConverter.Unittests.Helpers
 {
-  public class CompiledSourceFileProvider
+  public static class CompiledSourceFileProvider
   {
-    public static (AttributeData, AttributeSyntax) CompileAttribute (string attribute)
+    public static AttributeData CompileAttribute (string attribute)
     {
       var compilationTemplate =
           $"namespace TestCompilations {{ using System; using Nunit.Framework; public class TestClass {{ {attribute} public void Test(){{}} }}";
@@ -36,22 +36,18 @@ namespace NUnit2To3SyntaxConverter.UnitTests
           .OfType<MethodDeclarationSyntax>()
           .First();
 
-      var attributeSyntax = method
-          .AttributeLists.First()
-          .Attributes.First();
-
-      var attributeData = model.GetDeclaredSymbol (method).GetAttributes().First();
-      return (attributeData, attributeSyntax);
+      return model.GetDeclaredSymbol (method)
+          .GetAttributes()
+          .First();
     }
 
-    public static (IMethodSymbol, MethodDeclarationSyntax) LoadMethod (string file, string methodName)
+    public static MethodDeclarationSyntax LoadMethod (string file, string methodName)
     {
-      var (model, root) = LoadCompilationFromFile (file);
+      var (_, root) = LoadCompilationFromFile (file);
       var method = root.DescendantNodes()
           .OfType<MethodDeclarationSyntax>()
           .Single (syntax => syntax.Identifier.ToString() == methodName);
-      var methodSymbol = model.GetDeclaredSymbol (method);
-      return (methodSymbol, method);
+      return method;
     }
 
     public static (SemanticModel, SyntaxNode) LoadCompilationFromFile (string file)

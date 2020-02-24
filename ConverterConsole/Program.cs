@@ -67,7 +67,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
     {
       var queriedInstances = QueryVisualStudioInstances (options).ToList();
 
-      if (queriedInstances.Count <= 0)
+      if (queriedInstances.Count == 0)
       {
         DisplayNoMsBuildFoundError();
         return null;
@@ -79,22 +79,19 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
         return null;
       }
 
-      return queriedInstances.SingleOrDefault();
+      return queriedInstances.Single();
     }
 
     private static IEnumerable<VisualStudioInstance> QueryVisualStudioInstances (CmdLineOptions options)
     {
-      // ensure a user supplied msbuild is always found
       if (!string.IsNullOrWhiteSpace (options.MsBuildPath))
         MSBuildLocator.RegisterMSBuildPath (options.MsBuildPath);
 
       var instances = MSBuildLocator.QueryVisualStudioInstances();
 
-      // filter by version
       if (Version.TryParse (options.MsBuildVersion, out var version))
         instances = instances.Where (vs => vs.Version.Equals (version));
 
-      // filter by supplied msbuild file
       if (options.MsBuildPath != null && File.Exists (options.MsBuildPath))
         instances = instances.Where (vs => Path.GetFullPath (vs.MSBuildPath) == Path.GetFullPath (options.MsBuildPath));
       return instances;

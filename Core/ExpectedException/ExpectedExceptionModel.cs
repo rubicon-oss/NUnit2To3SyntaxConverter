@@ -52,7 +52,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public async Task<AttributeSyntax> GetAttributeSyntax ()
     {
       return await _attributeData.ApplicationSyntaxReference.GetSyntaxAsync() as AttributeSyntax
-             ?? throw new InvalidOperationException ($"member {_attributeData} is not a AttributeSyntax");
+             ?? throw new InvalidOperationException ($"member {_attributeData} is not a AttributeSyntax.");
     }
 
     public ExpressionSyntax AsConstraintExpression (string baseIndent)
@@ -72,7 +72,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
     {
       var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax
-                            ?? throw new ArgumentException ($"{nameof(attribute)} does not support a syntax tree");
+                            ?? throw new ArgumentException ($"{nameof(attribute)} does not support a syntax tree.");
 
       var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
 
@@ -89,7 +89,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       foreach (var attributeArgument in attributeArguments)
       {
         var value = attributeArgument.Expression
-                    ?? throw new InvalidOperationException ($"Attribute argument {attributeArgument} does not have a value");
+                    ?? throw new InvalidOperationException ($"Attribute argument {attributeArgument} does not have a value.");
 
         var namedArgumentName = attributeArgument.NameColon?.Name
                                 ?? attributeArgument.NameEquals?.Name;

@@ -23,14 +23,12 @@ namespace NUnit2To3SyntaxConverter
 {
   public class MigrationOptions
   {
-    private static readonly Encoding s_defaultEncoding = Encoding.Default;
-
     public static readonly MigrationOptions DefaultOptions = new MigrationOptions();
 
     public Func<Project, bool> ProjectFilter { get; } = _ => true;
 
     public Func<Document, bool> SourceFileFilter { get; } = _ => true;
 
-    public Encoding Encoding { get; } = s_defaultEncoding;
+    public Encoding Encoding { get; } = Encoding.Default;
   }
 }
