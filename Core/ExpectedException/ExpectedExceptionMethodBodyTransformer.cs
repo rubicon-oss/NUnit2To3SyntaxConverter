@@ -39,7 +39,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       var bodyStatement = node.Body.Statements.Last();
 
-      var lambdaExpression = MakeLambdaExpression (bodyStatement);
+      var lambdaExpression = CreateLambdaExpression (bodyStatement);
 
       var assertThat = MemberAccess (IdentifierName ("Assert"), "That")
           .WithLeadingTrivia (bodyIndentation);
@@ -66,16 +66,16 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
                   ExpressionStatement (assertThatThrows).WithTrailingTrivia (Whitespace (Formatting.NewLine)))));
     }
 
-    private static LambdaExpressionSyntax MakeLambdaExpression (StatementSyntax bodyStatement)
+    private static LambdaExpressionSyntax CreateLambdaExpression (StatementSyntax bodyStatement)
     {
       return bodyStatement switch
       {
-          ExpressionStatementSyntax exprStmt => MakeExpressionLambda (exprStmt),
-          _ => MakeStatementLambda (bodyStatement)
+          ExpressionStatementSyntax exprStmt => CreateExpressionLambda (exprStmt),
+          _ => CreateStatementLambda (bodyStatement)
       };
     }
 
-    private static LambdaExpressionSyntax MakeStatementLambda (StatementSyntax bodyStatement)
+    private static LambdaExpressionSyntax CreateStatementLambda (StatementSyntax bodyStatement)
     {
       var lambdaBody = Block (bodyStatement.WithLeadingTrivia (Whitespace (" ")).WithTrailingTrivia (Whitespace (" ")))
           .WithExtraIndentation (new string (Formatting.IndentationCharacter, Formatting.IndentationSize * 2));
@@ -87,7 +87,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       return lambdaExpression;
     }
 
-    private static LambdaExpressionSyntax MakeExpressionLambda (ExpressionStatementSyntax bodyExpressionStmt)
+    private static LambdaExpressionSyntax CreateExpressionLambda (ExpressionStatementSyntax bodyExpressionStmt)
     {
       var lambdaBody = bodyExpressionStmt.Expression;
       var lambdaExpression = ParenthesizedLambdaExpression (
