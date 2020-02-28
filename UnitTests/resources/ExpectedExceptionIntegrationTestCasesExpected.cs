@@ -61,5 +61,23 @@ namespace UnitTests
                   + "line"
                   + "string"));
     }
+    
+    [ExpectedException]
+    public void WontConvertAssertionStatement ()
+    {
+      Console.WriteLine();
+      if (true)
+      {
+      }
+      else
+      {
+      }
+      Assert.That(1, Is.EqualTo(1));
+    }
+    
+    [ExpectedException]
+    public void WontConvertEmptyMethod ()
+    {
+    }
   }
 }

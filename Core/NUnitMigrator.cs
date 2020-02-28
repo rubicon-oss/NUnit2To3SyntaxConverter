@@ -22,6 +22,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using NUnit2To3SyntaxConverter.ExpectedException;
+using Serilog;
+using Serilog.Core;
 
 namespace NUnit2To3SyntaxConverter
 {
@@ -32,6 +34,10 @@ namespace NUnit2To3SyntaxConverter
     public NUnitMigration (MigrationOptions options)
     {
       _options = options;
+      Log.Logger = new LoggerConfiguration()
+          .MinimumLevel.Warning()
+          .WriteTo.Console()
+          .CreateLogger();
     }
 
     public async Task Migrate (Solution solution)
