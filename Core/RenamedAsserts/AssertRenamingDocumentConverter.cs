@@ -15,32 +15,24 @@
 
 #endregion
 
-using System;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
-  public class NUnitAssertRewriter : CSharpSyntaxRewriter
+  public class AssertRenamingDocumentConverter : IDocumentConverter
   {
-    private readonly RenamedAssertsMap _renamedAssertsMap;
-    private readonly NUnitAssertRenamer _assertRenamer;
+    private readonly AssertRewriter _assertRewriter;
 
-    public NUnitAssertRewriter (RenamedAssertsMap renamedAssertsMap, NUnitAssertRenamer assertRenamer, bool visitIntoStructuredTrivia = false)
-        : base (visitIntoStructuredTrivia)
+    public AssertRenamingDocumentConverter ()
     {
-      _renamedAssertsMap = renamedAssertsMap;
-      _assertRenamer = assertRenamer;
+      _assertRewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
     }
 
-    public override SyntaxNode VisitMemberAccessExpression (MemberAccessExpressionSyntax node)
+    public async Task<SyntaxNode> Convert (Document document)
     {
-      var maybeNewName = _renamedAssertsMap.TryGetSyntax (node.Expression, node.Name);
-
-      return maybeNewName.HasValue
-          ? _assertRenamer.Transform (node, maybeNewName.Value)
-          : node;
+      var syntaxRoot = await document.GetSyntaxRootAsync();
+      return _assertRewriter.Visit (syntaxRoot);
     }
   }
 }
