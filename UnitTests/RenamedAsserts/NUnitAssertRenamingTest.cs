@@ -40,7 +40,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     public void TestAllSimpleCases (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
-      var rewriter = new NUnitAssertRewriter (new RenamedAssertsMap(), new NUnitAssertRenamer());
+      var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
 
       var actual = rewriter.Visit (expression);
 
@@ -58,7 +58,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     public void DoesHandleWhitespace (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
-      var rewriter = new NUnitAssertRewriter (new RenamedAssertsMap(), new NUnitAssertRenamer());
+      var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
 
       var actual = rewriter.Visit (expression);
 
@@ -73,7 +73,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     public void DoesNotRewriteNonChangedAsserts (string toRename)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
-      var rewriter = new NUnitAssertRewriter (new RenamedAssertsMap(), new NUnitAssertRenamer());
+      var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
 
       var actual = rewriter.Visit (expression);
 
