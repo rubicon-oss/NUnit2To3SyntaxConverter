@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="resources\**" CopyToPublishDirectory="always" />
+        <Compile Remove="resources\**" CopyToPublishDirectory="Always" />
     </ItemGroup>
 
     <ItemGroup>
