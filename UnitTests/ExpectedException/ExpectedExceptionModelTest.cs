@@ -27,8 +27,8 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
   public class ExpectedExceptionModelTest
-  {
-      [Test]
+  { 
+    [Test]
     public async Task CreateFromAttributeData_NoArgsAttribute ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException]");
@@ -45,8 +45,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (expectedExceptionModel.ExpectedMessage, Is.Null);
     }
 
-
-      [Test]
+    [Test]
     public void CreateFromAttributeData_UsesCustomExceptionType ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(typeof(DivideByZeroException))]");
@@ -59,7 +58,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Is.EquivalentTo (TypeOfExpression (IdentifierName ("DivideByZeroException"))));
     }
 
-      [Test]
+    [Test]
     public void CreateFromAttributeData_UsesUserMessage ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException (UserMessage = \"test user message\")]");
@@ -71,7 +70,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Is.EquivalentTo (LiteralExpression (SyntaxKind.StringLiteralExpression, Literal ("test user message"))));
     }
 
-      [Test]
+    [Test]
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message\")]", "test message", "Exact")]
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message regex\", MatchType = MessageMatch.Regex)]", "test message regex", "Regex")]
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message exact\", MatchType = MessageMatch.Exact)]", "test message exact", "Exact")]
@@ -98,7 +97,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Is.EquivalentTo (MemberAccess (IdentifierName ("MessageMatch"), matchType)));
     }
 
-      [Test]
+    [Test]
     [TestCase (
         "[ExpectedException ("
         + "typeof(DivideByZeroException), "
@@ -126,7 +125,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Is.EquivalentTo (LiteralExpression (SyntaxKind.StringLiteralExpression, Literal ("test user message"))));
     }
 
-      [Test]
+    [Test]
     [TestCase ("[ExpectedException (\"DivideByZeroException\")]")]
     [TestCase ("[ExpectedException (ExpectedExceptionName = \"DivideByZeroException\")]")]
     public void CreateFromAttributeData_ExceptionNameIsSetCorrectly (string attribute)
@@ -151,7 +150,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Throws.Exception.With.InstanceOf<InvalidOperationException>());
     }
 
-      [Test]
+    [Test]
     public void ConvertToConstraint_ConvertsForSimpleExceptionCase ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException]");
@@ -163,7 +162,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (constraint, Is.EquivalentTo (ParseExpression ("Throws.Exception")));
     }
 
-      [Test]
+    [Test]
     public void ConvertToConstraint_ConvertsForCustomException ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(typeof(TestException))]");
@@ -174,8 +173,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       Assert.That (constraint, Is.EquivalentTo (ParseExpression ("Throws.InstanceOf<TestException>()")));
     }
-
-      [Test]
+    
+    [Test]
     public void ConvertToConstraint_ConvertsForCustomWellKnownException ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(typeof(InvalidOperationException))]");
@@ -187,7 +186,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (constraint, Is.EquivalentTo (ParseExpression ("Throws.InvalidOperationException")));
     }
 
-      [Test]
+    [Test]
     public void ConvertToConstraint_ConvertsExpectedExceptionMessage ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(ExpectedMessage = \"Test Message\")]");
@@ -199,7 +198,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (constraint, Is.EquivalentTo (ParseExpression ("Throws.Exception.With.Message.EqualTo(\"Test Message\")")));
     }
 
-      [Test]
+    [Test]
     public void ConvertToConstraint_ConvertsExpectedExceptionMessageWithCustomMatcher ()
     {
       var attributeData =
