@@ -61,21 +61,5 @@ namespace UnitTests
                   + "line"
                   + "string"));
     }
-
-    [ExpectedException ("DivideByZeroException")]
-    public void WithExceptionNameStringLiteral ()
-    {
-    }
-
-
-    [ExpectedException (ExpectedExceptionName = "DivideByZeroException")]
-    public void WithExplicitlyNamedExceptionNameStringLiteral ()
-    {
-    }
-
-    [ExpectedException (typeof (DivideByZeroException), ExpectedExceptionName = "DivideByZeroException")]
-    public void DoubleSpecifiedException ()
-    {
-    }
   }
 }
