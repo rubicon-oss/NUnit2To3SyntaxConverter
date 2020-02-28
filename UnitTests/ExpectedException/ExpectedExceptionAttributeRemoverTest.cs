@@ -31,8 +31,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     private const string c_testCaseFile = "resources/RemoveExpectedAttributeTestCases.cs";
 
     [Test]
-    [TestCase ("MultipleAttributesInAttributeListFirst")]
-    [TestCase ("MultipleAttributesInAttributeListLast")]
+    [TestCase ("SingleAttributeInAttributeListLast")]
+    [TestCase ("SingleAttributeInAttributeListFirst")]
     [TestCase ("MultipleAttributesInAttributeListFirst")]
     [TestCase ("MultipleAttributesInAttributeListLast")]
     public void ExpectedExceptionAttributeRemover_RemovesSingleAttribute (string methodName)
