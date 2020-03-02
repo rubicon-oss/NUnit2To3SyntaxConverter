@@ -21,7 +21,6 @@ using NUnit2To3SyntaxConverter.Validation;
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
   public class ExpectedExceptionValidationError : IValidationError
-
   {
     private readonly MethodDeclarationSyntax _method;
     
