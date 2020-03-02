@@ -18,6 +18,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -117,6 +118,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     private ExpressionSyntax CreateWithMessage (ExpressionSyntax expression, string baseIndent)
     {
+      if (ExpectedMessage == null) return expression;
+
       var indent = new string (Formatting.IndentationCharacter, Formatting.IndentationSize);
       var withMessage = MemberAccess (
           expression.WithTrailingTrivia (Whitespace (Formatting.NewLine + baseIndent + indent + indent)),
@@ -135,15 +138,44 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       var withMessageMatchType = MemberAccess (withMessage, matchTypeFunctionName);
 
-      var withMessageMatchTypeInvocation = SimpleInvocation (
-          withMessageMatchType,
-          new[]
-          {
-              ExpectedMessage.WithLeadingTrivia (Whitespace (""))!
-                  .WithIndentation (indent: baseIndent + indent + indent + indent + indent)
-          });
+      if (EndsOnSameLine (ExpectedMessage)
+          && !IsMessageTooLong (ExpectedMessage))
+        return CreateSingleLineMessage (withMessageMatchType, ExpectedMessage, baseIndent + indent + indent + indent + indent);
+      else
+        return CreateMultiLineMessage (withMessageMatchType, ExpectedMessage, baseIndent + indent + indent + indent + indent);
+    }
 
-      return withMessageMatchTypeInvocation;
+    private ExpressionSyntax CreateSingleLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent) =>
+        SimpleInvocation (
+            invocationOn,
+            new[]
+            {
+                message.WithLeadingTrivia (Whitespace (""))!.WithIndentation (indent: indent)
+            });
+
+    private ExpressionSyntax CreateMultiLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent) =>
+        InvocationExpression (
+            invocationOn,
+            ArgumentList (
+                Token (SyntaxKind.OpenParenToken).WithLeadingTrivia (Whitespace (" ")),
+                SeparatedList (
+                    new[]
+                    {
+                        Argument (message.WithIndentation (indent: indent).WithLeadingTrivia (Whitespace (Formatting.NewLine + indent)))
+                    }),
+                Token (SyntaxKind.CloseParenToken)));
+
+
+    private static bool EndsOnSameLine (SyntaxNode node)
+    {
+      var location = node.GetLocation().GetLineSpan();
+      return location.EndLinePosition.Line == location.StartLinePosition.Line;
+    }
+
+    private static bool IsMessageTooLong (SyntaxNode node)
+    {
+      var span = node.GetLocation().GetMappedLineSpan();
+      return span.Span.End.Character >= 120;
     }
   }
 }

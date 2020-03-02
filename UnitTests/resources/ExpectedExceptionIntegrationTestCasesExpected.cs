@@ -49,7 +49,8 @@ namespace UnitTests
       Assert.That (
           () => Console.WriteLine(),
           Throws.InstanceOf<DivideByZeroException>()
-              .With.Message.Contains ("test message reallllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllly long"));
+              .With.Message.Contains (
+                  "test message reallllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllly long"));
     }
     
     public void WithMultiLineString ()
@@ -57,9 +58,23 @@ namespace UnitTests
       Assert.That (
           () => Console.WriteLine(),
           Throws.InstanceOf<DivideByZeroException>()
-              .With.Message.EqualTo ("multi"
+              .With.Message.EqualTo (
+                  "multi"
                   + "line"
                   + "string"));
+    }
+    
+    [ExpectedException (ExpectedMessage = "test message regex", MatchType = MessageMatch.Regex)]
+    public void WithNonExpressionStatementInLastPosition ()
+    {
+      if (true)
+      {
+        Assert.That (true, Is.EqualTo (true));
+      }
+      else
+      {
+        throw Exception ("test message regex");
+      }
     }
     
     [ExpectedException]

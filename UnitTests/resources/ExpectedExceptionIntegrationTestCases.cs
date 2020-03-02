@@ -56,6 +56,19 @@ namespace UnitTests
       Console.WriteLine();
     }
     
+    [ExpectedException (ExpectedMessage = "test message regex", MatchType = MessageMatch.Regex)]
+    public void WithNonExpressionStatementInLastPosition ()
+    {
+      if (true)
+      {
+        Assert.That (true, Is.EqualTo (true));
+      }
+      else
+      {
+        throw Exception ("test message regex");
+      }
+    }
+    
     [ExpectedException]
     public void WontConvertAssertionStatement ()
     {

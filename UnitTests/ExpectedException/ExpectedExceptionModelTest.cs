@@ -139,7 +139,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           Is.EquivalentTo (TypeOfExpression (IdentifierName ("DivideByZeroException"))));
     }
 
-      [Test]
+    [Test]
     public void CreateFromAttributeData_ThrowsWhenTypeAndNameIsSpecified ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute (

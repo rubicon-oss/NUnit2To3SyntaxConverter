@@ -39,6 +39,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("WithMultiLineString")]
     [TestCase ("WontConvertAssertionStatement")]
     [TestCase ("WontConvertEmptyMethod")]
+    [TestCase ("WithNonExpressionStatementInLastPosition")]
     public void ExpectedExceptionRewritesToExpectedCases (string method)
     {
       var (rewriter, syntax) = CreateRewriterFor (c_testCasesSourceFileName, method);
