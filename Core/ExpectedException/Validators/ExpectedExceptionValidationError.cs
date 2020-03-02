@@ -24,14 +24,9 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 
   {
     private readonly MethodDeclarationSyntax _method;
+    
     private readonly string _reason;
-
-    public ExpectedExceptionValidationError (MethodDeclarationSyntax method, string reason)
-    {
-      _method = method;
-      _reason = reason;
-    }
-
+    
     public string Category => "ExpectedException";
     
     public string Reason => _reason;
@@ -39,5 +34,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
     public string FileName => _method.GetLocation().GetMappedLineSpan().Path;
 
     public string MethodName => _method.Identifier.ToString();
+
+    public ExpectedExceptionValidationError (MethodDeclarationSyntax method, string reason)
+    {
+      _method = method;
+      _reason = reason;
+    }
   }
 }
