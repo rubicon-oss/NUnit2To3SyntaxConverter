@@ -65,7 +65,7 @@ namespace UnitTests
     }
     
     [ExpectedException (ExpectedMessage = "test message regex", MatchType = MessageMatch.Regex)]
-    public void WithNonExpressionStatementInLastPosition ()
+    public void WontConvertWithNonExpressionStatementInLastPosition ()
     {
       if (true)
       {
