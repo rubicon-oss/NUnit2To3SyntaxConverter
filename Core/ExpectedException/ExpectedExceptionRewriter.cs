@@ -22,7 +22,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using NUnit2To3SyntaxConverter.ExpectedException.Validators;
 using Serilog;
+using Serilog.Core;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
@@ -44,20 +46,27 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
     {
-      try
+      var errors = Validation.Validators.ValidateMultiple (
+          node,
+          new EmptyMethodBodyValidator(),
+          new AssertInLastStatementValidator(),
+          new LastStatementIsExpressionStatementValidator());
+      if (errors.Count > 0)
       {
-        var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node).SingleOrDefault();
+        foreach (var error in errors)
+        {
+          Log.Warning ("{@file} - {@method}: {@category}:\n {@message}", error.FileName, error.MethodName, error.Category, error.Reason);
+        }
 
-        if (expectedExceptionAttribute == null) return node;
-
-        return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
-            .WithAdditionalAnnotations (Formatter.Annotation);
-      }
-      catch (ConversionWarning warn)
-      {
-        Log.Warning("{@file} - {@method}: ExpectedException:\n {@message}", warn.Location.GetMappedLineSpan().Path, warn.MethodName, warn.Message);
         return node;
       }
+
+      var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node).SingleOrDefault();
+
+      if (expectedExceptionAttribute == null) return node;
+
+      return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
+          .WithAdditionalAnnotations (Formatter.Annotation);
     }
 
     private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)

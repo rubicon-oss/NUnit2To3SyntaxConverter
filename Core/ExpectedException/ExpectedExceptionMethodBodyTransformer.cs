@@ -29,26 +29,12 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
   {
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
-      if (node.Body == null || node.Body.Statements.Count == 0)
-      {
-          throw new ConversionWarning (node.GetLocation(), node.Identifier.ToFullString(), "Unable to convert method with empty body.");
-      }
-      
       var indentation = Whitespace (new string (' ', 2));
-      var baseIndentation = node.Body.GetLeadingTrivia();
+      var baseIndentation = node.Body!.GetLeadingTrivia();
       var bodyIndentation = baseIndentation.Add (indentation);
       var assertThatArgsIndentation = bodyIndentation.Add (indentation).Add (indentation);
 
       var bodyStatement = node.Body.Statements.Last();
-      if (bodyStatement.WithoutTrivia().ToFullString().StartsWith ("Assert."))
-      {
-          throw new ConversionWarning(node.GetLocation(), node.Identifier.ToFullString(), "Unable to convert method with assertion in last statement.");
-      }
-
-      if (!(bodyStatement is ExpressionStatementSyntax))
-      {
-          throw new ConversionWarning(node.GetLocation(), node.Identifier.ToFullString(), "Unable to convert method with non expression statement in last position.");
-      }
 
       var lambdaExpression = CreateLambdaExpression (bodyStatement);
 
