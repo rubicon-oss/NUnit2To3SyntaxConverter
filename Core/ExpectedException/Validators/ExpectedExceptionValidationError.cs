@@ -23,21 +23,15 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
   public class ExpectedExceptionValidationError : IValidationError
   {
     private readonly MethodDeclarationSyntax _method;
-    
-    private readonly string _reason;
-    
+    public string Reason { get; }
     public string Category => "ExpectedException";
-    
-    public string Reason => _reason;
-
     public string FileName => _method.GetLocation().GetMappedLineSpan().Path;
-
     public string MethodName => _method.Identifier.ToString();
 
     public ExpectedExceptionValidationError (MethodDeclarationSyntax method, string reason)
     {
       _method = method;
-      _reason = reason;
+      Reason = reason;
     }
   }
 }
