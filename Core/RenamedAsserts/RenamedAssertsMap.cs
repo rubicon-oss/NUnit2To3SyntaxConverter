@@ -53,7 +53,17 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
                            { "StringContaining", "Does.Contain" },
                            { "StringMatching", "Does.Match" },
                        }
-             }
+             },
+             {
+                 "Is.Not", new Dictionary<string, string>
+                           {
+                               { "InstanceOfType", "Is.Not.InstanceOf" },
+                               { "StringStarting", "Does.Not.StartWith" },
+                               { "StringEnding", "Does.Not.EndWith" },
+                               { "StringContaining", "Does.Not.Contain" },
+                               { "StringMatching", "Does.Not.Match" },
+                           }
+             },
          };
 
     public (ExpressionSyntax, SimpleNameSyntax)? TryGetSyntax (ExpressionSyntax expression, SimpleNameSyntax access)
@@ -62,14 +72,14 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
       {
         if (methodMap.TryGetValue (access.Identifier.WithoutTrivia().ToString(), out var newName))
         {
-          return BuildNewSyntax (newName, expression, access);
+          return BuildNewSyntax (newName, access);
         }
       }
 
       return null;
     }
 
-    private (ExpressionSyntax, SimpleNameSyntax) BuildNewSyntax (string newName, ExpressionSyntax expression, SimpleNameSyntax access)
+    private (ExpressionSyntax, SimpleNameSyntax) BuildNewSyntax (string newName,  SimpleNameSyntax access)
     {
       var nameParts = newName.Split ('.');
 
