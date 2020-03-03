@@ -79,7 +79,7 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
       return null;
     }
 
-    private (ExpressionSyntax, SimpleNameSyntax) BuildNewSyntax (string newName,  SimpleNameSyntax access)
+    private (ExpressionSyntax, SimpleNameSyntax) BuildNewSyntax (string newName, SimpleNameSyntax access)
     {
       var nameParts = newName.Split ('.');
 

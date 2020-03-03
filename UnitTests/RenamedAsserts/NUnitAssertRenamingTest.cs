@@ -60,7 +60,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Text.\n        DoesNotStartWith (...)", "Does.Not.\n        StartWith (...)")]
     [TestCase ("Text\n        .StartsWith (...)", "Does\n        .StartWith (...)")]
     [TestCase ("Text\n        .StartsWith(...)", "Does\n        .StartWith(...)")]
-    [TestCase("Method.Call.Inner( Assert.That(\"string\", Is.StringStarting (...)))", "Method.Call.Inner( Assert.That(\"string\", Does.StartWith (...)))")]
+    [TestCase (
+        "Method.Call.Inner( Assert.That(\"string\", Is.StringStarting (...)))",
+        "Method.Call.Inner( Assert.That(\"string\", Does.StartWith (...)))")]
     public void DoesHandleWhitespace (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
