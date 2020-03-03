@@ -1,4 +1,5 @@
 ﻿#region copyright
+
 // 
 // Copyright (c) rubicon IT GmbH
 // 
@@ -11,18 +12,22 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 // FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 #endregion
 
-using NUnit.Framework;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NUnit2To3SyntaxConverter.Validation;
 
-namespace NUnit2To3SyntaxConverter.UnitTests
+namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
-    public class Test
+  public class AssertInLastStatementValidator : IValidator<MethodDeclarationSyntax>
+  {
+    public IValidationError? Validate (MethodDeclarationSyntax input)
     {
-        [Test]
-        public void Test1 ()
-        {
-            Assert.True(true);
-        }
+      if (input?.Body?.Statements.LastOrDefault()?.WithoutTrivia()?.ToString().StartsWith ("Assert.") == true)
+        return new ExpectedExceptionValidationError (input, "Unable to convert method with Assertion in last statement.");
+      return null;
     }
+  }
 }
