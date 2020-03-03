@@ -57,8 +57,10 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
       var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new ConsoleProgressReporter());
 
-      await new NUnitMigration (MigrationOptions.DefaultOptions)
-          .Migrate (solution);
+      await new NUnitMigration (
+              MigrationOptions.DefaultOptions
+                  .WithConverters(options.Conversions))
+                  .Migrate (solution);
 
       return 0;
     }

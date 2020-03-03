@@ -21,7 +21,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using NUnit2To3SyntaxConverter.ExpectedException;
 using Serilog;
 
 namespace NUnit2To3SyntaxConverter
@@ -42,7 +41,7 @@ namespace NUnit2To3SyntaxConverter
     public async Task Migrate (Solution solution)
     {
       var tasks = GetDocuments (solution)
-          .Select (async document => await ConvertDocument (document, new ExpectedExceptionDocumentConverter()))
+          .Select (async document => await ConvertDocument (document, _options.Converters.ToArray()))
           .Select (async documentResult => WriteBack (await documentResult));
 
       await Task.WhenAll (tasks);

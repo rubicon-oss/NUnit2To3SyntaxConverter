@@ -16,8 +16,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using NUnit2To3SyntaxConverter.ExpectedException;
+using NUnit2To3SyntaxConverter.Extensions;
+using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter
 {
@@ -30,5 +35,40 @@ namespace NUnit2To3SyntaxConverter
     public Func<Document, bool> SourceFileFilter { get; } = _ => true;
 
     public Encoding Encoding { get; } = Encoding.Default;
+
+    public IEnumerable<IDocumentConverter> Converters { get; } = new List<IDocumentConverter>();
+    
+    private MigrationOptions ()
+    {
+    }
+
+    private MigrationOptions (
+        Func<Project, bool> projectFilter,
+        Func<Document, bool> documentFilter,
+        Encoding encoding,
+        IEnumerable<IDocumentConverter> converters)
+    {
+      ProjectFilter = projectFilter;
+      SourceFileFilter = documentFilter;
+      Encoding = encoding;
+      Converters = converters;
+    }
+
+    public MigrationOptions WithConverters (IEnumerable<string> converterNames)
+    {
+      var converter = converterNames.Select (CreateConverter).WhereNotNull();
+      
+      return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converter);
+    }
+
+    private IDocumentConverter? CreateConverter (string conversionFeatureName)
+    {
+      return conversionFeatureName switch
+      {
+          "expected-exception" => new ExpectedExceptionDocumentConverter(),
+          "asserts" => new AssertRenamingDocumentConverter(),
+          _ => null,
+      };
+    }
   }
 }
