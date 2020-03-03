@@ -15,9 +15,7 @@
 
 #endregion
 
-using System.Drawing.Design;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Win32;
 using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators

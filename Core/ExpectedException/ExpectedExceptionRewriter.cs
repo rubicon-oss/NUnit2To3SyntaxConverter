@@ -24,7 +24,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using NUnit2To3SyntaxConverter.ExpectedException.Validators;
 using Serilog;
-using Serilog.Core;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {

@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using NUnit2To3SyntaxConverter.ExpectedException;
 using Serilog;
-using Serilog.Core;
 
 namespace NUnit2To3SyntaxConverter
 {
