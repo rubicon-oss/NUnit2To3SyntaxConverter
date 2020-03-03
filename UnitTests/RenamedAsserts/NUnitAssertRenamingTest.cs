@@ -37,6 +37,11 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Is.StringContaining (...)", "Does.Contain (...)")]
     [TestCase ("Is.StringEnding (...)", "Does.EndWith (...)")]
     [TestCase ("Is.StringMatching (...)", "Does.Match (...)")]
+    [TestCase ("Is.Not.InstanceOfType<T> (...)", "Is.Not.InstanceOf<T> (...)")]
+    [TestCase ("Is.Not.StringStarting (...)", "Does.Not.StartWith (...)")]
+    [TestCase ("Is.Not.StringContaining (...)", "Does.Not.Contain (...)")]
+    [TestCase ("Is.Not.StringEnding (...)", "Does.Not.EndWith (...)")]
+    [TestCase ("Is.Not.StringMatching (...)", "Does.Not.Match (...)")]
     public void TestAllSimpleCases (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
@@ -55,6 +60,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Text.\n        DoesNotStartWith (...)", "Does.Not.\n        StartWith (...)")]
     [TestCase ("Text\n        .StartsWith (...)", "Does\n        .StartWith (...)")]
     [TestCase ("Text\n        .StartsWith(...)", "Does\n        .StartWith(...)")]
+    [TestCase("Method.Call.Inner( Assert.That(\"string\", Is.StringStarting (...)))", "Method.Call.Inner( Assert.That(\"string\", Does.StartWith (...)))")]
     public void DoesHandleWhitespace (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
