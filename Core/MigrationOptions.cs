@@ -37,7 +37,7 @@ namespace NUnit2To3SyntaxConverter
     public Encoding Encoding { get; } = Encoding.Default;
 
     public IEnumerable<IDocumentConverter> Converters { get; } = new List<IDocumentConverter>();
-    
+
     private MigrationOptions ()
     {
     }
@@ -57,7 +57,7 @@ namespace NUnit2To3SyntaxConverter
     public MigrationOptions WithConverters (IEnumerable<string> converterNames)
     {
       var converter = converterNames.Select (CreateConverter).WhereNotNull();
-      
+
       return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converter);
     }
 

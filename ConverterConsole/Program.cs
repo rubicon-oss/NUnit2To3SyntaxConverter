@@ -59,8 +59,8 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
       await new NUnitMigration (
               MigrationOptions.DefaultOptions
-                  .WithConverters(options.Conversions))
-                  .Migrate (solution);
+                  .WithConverters (options.Conversions))
+          .Migrate (solution);
 
       return 0;
     }
