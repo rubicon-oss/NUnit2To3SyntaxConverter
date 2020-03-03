@@ -33,7 +33,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     public ExpressionSyntax? UserMessage { get; }
     public ExpressionSyntax? MatchType { get; }
     public ExpressionSyntax? ExpectedMessage { get; }
-    
+
     public ExpectedExceptionModel (
         AttributeData attributeData,
         ExpressionSyntax exceptionType,

@@ -25,11 +25,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
     public IValidationError? Validate (MethodDeclarationSyntax input)
     {
       var lastStatement = input.Body?.Statements.LastOrDefault();
-      if (lastStatement == null 
+      if (lastStatement == null
           || lastStatement is ExpressionStatementSyntax
           || lastStatement is ThrowStatementSyntax)
         return null;
-      
+
       return new ExpectedExceptionValidationError (input, "Unable to convert method with non expression statement in last position.");
     }
   }

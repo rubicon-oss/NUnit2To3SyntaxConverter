@@ -145,9 +145,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       Assert.That (errors, Is.Not.Empty);
       Assert.That (errors.Select (e => e.Reason), Is.EquivalentTo (reasons));
     }
-    
+
     [Test]
-    [TestCase("ShouldValidateWithoutErrors")]
+    [TestCase ("ShouldValidateWithoutErrors")]
     public void AllAsserts_ValidateWithout (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);

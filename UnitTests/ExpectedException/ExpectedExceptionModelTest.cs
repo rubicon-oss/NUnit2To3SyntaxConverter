@@ -27,7 +27,7 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
   public class ExpectedExceptionModelTest
-  { 
+  {
     [Test]
     public async Task CreateFromAttributeData_NoArgsAttribute ()
     {
@@ -173,7 +173,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       Assert.That (constraint, Is.EquivalentTo (ParseExpression ("Throws.InstanceOf<TestException>()")));
     }
-    
+
     [Test]
     public void ConvertToConstraint_ConvertsForCustomWellKnownException ()
     {
