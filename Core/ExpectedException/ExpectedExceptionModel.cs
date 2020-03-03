@@ -87,8 +87,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var builder = new ExpectedExceptionModelBuilder();
       foreach (var attributeArgument in attributeArguments)
       {
-        var value = attributeArgument.Expression
-                    ?? throw new InvalidOperationException ($"Attribute argument {attributeArgument} does not have a value.");
+        var value = attributeArgument.Expression;
 
         var namedArgumentName = attributeArgument.NameColon?.Name
                                 ?? attributeArgument.NameEquals?.Name;
