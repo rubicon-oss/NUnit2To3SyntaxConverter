@@ -59,7 +59,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
       var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new ConsoleProgressReporter());
       var converters = options.FeatureFlags.Select (CreateConverter);
-      
+
       await new NUnitMigration (
               MigrationOptions.DefaultOptions
                   .WithConverters (converters))
@@ -67,18 +67,18 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
 
       return 0;
     }
-    
-    
+
+
     private static IDocumentConverter CreateConverter (FeatureFlags flag)
     {
       return flag switch
       {
           FeatureFlags.ExpectedException => new ExpectedExceptionDocumentConverter(),
           FeatureFlags.AssertRenaming => new AssertRenamingDocumentConverter(),
-          _ => throw new InvalidOperationException("Exhaustive switch is not exhaustive.")
+          _ => throw new InvalidOperationException ("Exhaustive switch is not exhaustive.")
       };
     }
-    
+
     private static VisualStudioInstance? LocateMsBuild (CmdLineOptions options)
     {
       var queriedInstances = QueryVisualStudioInstances (options).ToList();

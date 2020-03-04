@@ -17,12 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using NUnit2To3SyntaxConverter.ExpectedException;
-using NUnit2To3SyntaxConverter.Extensions;
-using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter
 {
@@ -58,6 +54,5 @@ namespace NUnit2To3SyntaxConverter
     {
       return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converters);
     }
-
   }
 }

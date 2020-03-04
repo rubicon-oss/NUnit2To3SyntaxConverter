@@ -29,42 +29,42 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
   public class RenamedAssertsMap
   {
     private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> s_newNameMap
-      = new Dictionary<string, IReadOnlyDictionary<string, string>>
-         {
-             {
-                 "Text", new Dictionary<string, string>
-                         {
-                             { "DoesNotMatch", "Does.Not.Match" },
-                             { "Matches", "Does.Match" },
-                             { "DoesNotEndWith", "Does.Not.EndWith" },
-                             { "EndsWith", "Does.EndWith" },
-                             { "StartsWith", "Does.StartWith" },
-                             { "DoesNotStartWith", "Does.Not.StartWith" },
-                             { "Contains", "Does.Contain" },
-                             { "DoesNotContain", "Does.Not.Contain" },
-                         }
-             },
-             {
-                 "Is", new Dictionary<string, string>
-                       {
-                           { "InstanceOfType", "Is.InstanceOf" },
-                           { "StringStarting", "Does.StartWith" },
-                           { "StringEnding", "Does.EndWith" },
-                           { "StringContaining", "Does.Contain" },
-                           { "StringMatching", "Does.Match" },
-                       }
-             },
-             {
-                 "Is.Not", new Dictionary<string, string>
-                           {
-                               { "InstanceOfType", "Is.Not.InstanceOf" },
-                               { "StringStarting", "Does.Not.StartsWith" },
-                               { "StringEnding", "Does.Not.EndsWith" },
-                               { "StringContaining", "Does.Not.Contains" },
-                               { "StringMatching", "Does.Not.Matches" },
-                           }
-             },
-         };
+        = new Dictionary<string, IReadOnlyDictionary<string, string>>
+          {
+              {
+                  "Text", new Dictionary<string, string>
+                          {
+                              { "DoesNotMatch", "Does.Not.Match" },
+                              { "Matches", "Does.Match" },
+                              { "DoesNotEndWith", "Does.Not.EndWith" },
+                              { "EndsWith", "Does.EndWith" },
+                              { "StartsWith", "Does.StartWith" },
+                              { "DoesNotStartWith", "Does.Not.StartWith" },
+                              { "Contains", "Does.Contain" },
+                              { "DoesNotContain", "Does.Not.Contain" },
+                          }
+              },
+              {
+                  "Is", new Dictionary<string, string>
+                        {
+                            { "InstanceOfType", "Is.InstanceOf" },
+                            { "StringStarting", "Does.StartWith" },
+                            { "StringEnding", "Does.EndWith" },
+                            { "StringContaining", "Does.Contain" },
+                            { "StringMatching", "Does.Match" },
+                        }
+              },
+              {
+                  "Is.Not", new Dictionary<string, string>
+                            {
+                                { "InstanceOfType", "Is.Not.InstanceOf" },
+                                { "StringStarting", "Does.Not.StartsWith" },
+                                { "StringEnding", "Does.Not.EndsWith" },
+                                { "StringContaining", "Does.Not.Contains" },
+                                { "StringMatching", "Does.Not.Matches" },
+                            }
+              },
+          };
 
     public (ExpressionSyntax, SimpleNameSyntax)? TryGetSyntax (ExpressionSyntax expression, SimpleNameSyntax access)
     {
