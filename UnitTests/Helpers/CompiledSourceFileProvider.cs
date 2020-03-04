@@ -49,6 +49,15 @@ namespace NUnit2To3SyntaxConverter.Unittests.Helpers
           .Single (syntax => syntax.Identifier.ToString() == methodName);
       return method;
     }
+    
+    public static ClassDeclarationSyntax LoadClass (string file, string className)
+    {
+      var (_, root) = LoadCompilationFromFile (file);
+      var classSyntax = root.DescendantNodes()
+          .OfType<ClassDeclarationSyntax>()
+          .Single (syntax => syntax.Identifier.ToString() == className);
+      return classSyntax;
+    }
 
     public static (SemanticModel, SyntaxNode) LoadCompilationFromFile (string file)
       => LoadSemanticModel (File.ReadAllText (TestContext.CurrentContext.TestDirectory + "/" + file));
