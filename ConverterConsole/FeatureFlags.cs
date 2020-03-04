@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -15,34 +15,11 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using CommandLine;
-using JetBrains.Annotations;
-
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
-  [UsedImplicitly]
-  public class CmdLineOptions
+  public enum FeatureFlags
   {
-    public CmdLineOptions (string solutionPath, IEnumerable<FeatureFlags> featureFlags, string? msBuildVersion = null, string? msBuildPath = null)
-    {
-      SolutionPath = solutionPath;
-      FeatureFlags = featureFlags;
-      MsBuildVersion = msBuildVersion;
-      MsBuildPath = msBuildPath;
-    }
-
-    [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
-    public string SolutionPath { get; }
-
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
-    public IEnumerable<FeatureFlags> FeatureFlags { get; }
-
-    [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
-    public string? MsBuildVersion { get; }
-
-    [Option ("msbuildpath", Required = false, MetaValue = "PATH")]
-    public string? MsBuildPath { get; }
+    ExpectedException,
+    AssertRenaming,
   }
 }

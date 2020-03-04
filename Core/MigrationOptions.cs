@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.CodeAnalysis;
 
@@ -30,5 +31,28 @@ namespace NUnit2To3SyntaxConverter
     public Func<Document, bool> SourceFileFilter { get; } = _ => true;
 
     public Encoding Encoding { get; } = Encoding.Default;
+
+    public IEnumerable<IDocumentConverter> Converters { get; } = new List<IDocumentConverter>();
+
+    private MigrationOptions ()
+    {
+    }
+
+    private MigrationOptions (
+        Func<Project, bool> projectFilter,
+        Func<Document, bool> documentFilter,
+        Encoding encoding,
+        IEnumerable<IDocumentConverter> converters)
+    {
+      ProjectFilter = projectFilter;
+      SourceFileFilter = documentFilter;
+      Encoding = encoding;
+      Converters = converters;
+    }
+
+    public MigrationOptions WithConverters (IEnumerable<IDocumentConverter> converters)
+    {
+      return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converters);
+    }
   }
 }

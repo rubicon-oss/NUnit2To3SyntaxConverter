@@ -15,34 +15,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using CommandLine;
-using JetBrains.Annotations;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
-namespace NUnit2To3SyntaxConverter.ConverterConsole
+namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
-  [UsedImplicitly]
-  public class CmdLineOptions
+  public class AssertRenamingDocumentConverter : IDocumentConverter
   {
-    public CmdLineOptions (string solutionPath, IEnumerable<FeatureFlags> featureFlags, string? msBuildVersion = null, string? msBuildPath = null)
+    private readonly AssertRewriter _assertRewriter;
+
+    public AssertRenamingDocumentConverter ()
     {
-      SolutionPath = solutionPath;
-      FeatureFlags = featureFlags;
-      MsBuildVersion = msBuildVersion;
-      MsBuildPath = msBuildPath;
+      _assertRewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
     }
 
-    [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
-    public string SolutionPath { get; }
-
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
-    public IEnumerable<FeatureFlags> FeatureFlags { get; }
-
-    [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
-    public string? MsBuildVersion { get; }
-
-    [Option ("msbuildpath", Required = false, MetaValue = "PATH")]
-    public string? MsBuildPath { get; }
+    public async Task<SyntaxNode> Convert (Document document)
+    {
+      var syntaxRoot = await document.GetSyntaxRootAsync();
+      return _assertRewriter.Visit (syntaxRoot);
+    }
   }
 }

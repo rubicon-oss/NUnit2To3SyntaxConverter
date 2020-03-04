@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
+using NUnit2To3SyntaxConverter.ExpectedException;
+using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
@@ -56,11 +58,25 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
       workspace.WorkspaceFailed += (sender, args) => { Console.WriteLine (args.Diagnostic); };
 
       var solution = await workspace.OpenSolutionAsync (options.SolutionPath, new ConsoleProgressReporter());
+      var converters = options.FeatureFlags.Select (CreateConverter);
 
-      await new NUnitMigration (MigrationOptions.DefaultOptions)
+      await new NUnitMigration (
+              MigrationOptions.DefaultOptions
+                  .WithConverters (converters))
           .Migrate (solution);
 
       return 0;
+    }
+
+
+    private static IDocumentConverter CreateConverter (FeatureFlags flag)
+    {
+      return flag switch
+      {
+          FeatureFlags.ExpectedException => new ExpectedExceptionDocumentConverter(),
+          FeatureFlags.AssertRenaming => new AssertRenamingDocumentConverter(),
+          _ => throw new InvalidOperationException ("Exhaustive switch is not exhaustive.")
+      };
     }
 
     private static VisualStudioInstance? LocateMsBuild (CmdLineOptions options)

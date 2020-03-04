@@ -16,33 +16,30 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using CommandLine;
-using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NUnit2To3SyntaxConverter.ConverterConsole
+namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
-  [UsedImplicitly]
-  public class CmdLineOptions
+  public class AssertRewriter : CSharpSyntaxRewriter
   {
-    public CmdLineOptions (string solutionPath, IEnumerable<FeatureFlags> featureFlags, string? msBuildVersion = null, string? msBuildPath = null)
+    private readonly RenamedAssertsMap _renamedAssertsMap;
+    private readonly AssertRenamer _assertRenamer;
+
+    public AssertRewriter (RenamedAssertsMap renamedAssertsMap, AssertRenamer assertRenamer)
     {
-      SolutionPath = solutionPath;
-      FeatureFlags = featureFlags;
-      MsBuildVersion = msBuildVersion;
-      MsBuildPath = msBuildPath;
+      _renamedAssertsMap = renamedAssertsMap;
+      _assertRenamer = assertRenamer;
     }
 
-    [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
-    public string SolutionPath { get; }
+    public override SyntaxNode VisitMemberAccessExpression (MemberAccessExpressionSyntax node)
+    {
+      var maybeNewName = _renamedAssertsMap.TryGetSyntax (node.Expression, node.Name);
 
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
-    public IEnumerable<FeatureFlags> FeatureFlags { get; }
-
-    [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
-    public string? MsBuildVersion { get; }
-
-    [Option ("msbuildpath", Required = false, MetaValue = "PATH")]
-    public string? MsBuildPath { get; }
+      return maybeNewName.HasValue
+          ? _assertRenamer.Transform (node, maybeNewName.Value)
+          : node;
+    }
   }
 }

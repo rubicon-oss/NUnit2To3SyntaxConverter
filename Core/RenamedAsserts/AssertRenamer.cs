@@ -15,34 +15,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using CommandLine;
-using JetBrains.Annotations;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NUnit2To3SyntaxConverter.ConverterConsole
+namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
-  [UsedImplicitly]
-  public class CmdLineOptions
+  public class AssertRenamer : ISyntaxTransformer<MemberAccessExpressionSyntax, (ExpressionSyntax, SimpleNameSyntax)>
   {
-    public CmdLineOptions (string solutionPath, IEnumerable<FeatureFlags> featureFlags, string? msBuildVersion = null, string? msBuildPath = null)
+    public MemberAccessExpressionSyntax Transform (MemberAccessExpressionSyntax node, (ExpressionSyntax, SimpleNameSyntax) context)
     {
-      SolutionPath = solutionPath;
-      FeatureFlags = featureFlags;
-      MsBuildVersion = msBuildVersion;
-      MsBuildPath = msBuildPath;
+      var (newExpression, newAccessor) = context;
+
+      var exprWithTrivia = newExpression.WithTriviaFrom (node.Expression);
+      var accessorWithTrivia = newAccessor.WithTriviaFrom (node.Name);
+
+      return node.WithExpression (exprWithTrivia)
+          .WithName (accessorWithTrivia);
     }
-
-    [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
-    public string SolutionPath { get; }
-
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
-    public IEnumerable<FeatureFlags> FeatureFlags { get; }
-
-    [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
-    public string? MsBuildVersion { get; }
-
-    [Option ("msbuildpath", Required = false, MetaValue = "PATH")]
-    public string? MsBuildPath { get; }
   }
 }
