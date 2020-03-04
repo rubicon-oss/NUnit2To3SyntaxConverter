@@ -54,21 +54,10 @@ namespace NUnit2To3SyntaxConverter
       Converters = converters;
     }
 
-    public MigrationOptions WithConverters (IEnumerable<string> converterNames)
+    public MigrationOptions WithConverters (IEnumerable<IDocumentConverter> converters)
     {
-      var converter = converterNames.Select (CreateConverter).WhereNotNull();
-
-      return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converter);
+      return new MigrationOptions (ProjectFilter, SourceFileFilter, Encoding, converters);
     }
 
-    private IDocumentConverter? CreateConverter (string conversionFeatureName)
-    {
-      return conversionFeatureName switch
-      {
-          "expected-exception" => new ExpectedExceptionDocumentConverter(),
-          "asserts" => new AssertRenamingDocumentConverter(),
-          _ => null,
-      };
-    }
   }
 }

@@ -41,7 +41,7 @@ namespace NUnit2To3SyntaxConverter
     public async Task Migrate (Solution solution)
     {
       var tasks = GetDocuments (solution)
-          .Select (async document => await ConvertDocument (document, _options.Converters.ToArray()))
+          .Select (async document => await ConvertDocument (document, _options.Converters))
           .Select (async documentResult => WriteBack (await documentResult));
 
       await Task.WhenAll (tasks);
@@ -55,7 +55,7 @@ namespace NUnit2To3SyntaxConverter
           .Where (_options.SourceFileFilter);
     }
 
-    private async Task<(Document, Document)> ConvertDocument (Document document, params IDocumentConverter[] converters)
+    private async Task<(Document, Document)> ConvertDocument (Document document, IEnumerable<IDocumentConverter> converters)
     {
       var newDoc = document;
 

@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -15,31 +15,11 @@
 
 #endregion
 
-using System;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace NUnit2To3SyntaxConverter.RenamedAsserts
+namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
-  public class AssertRewriter : CSharpSyntaxRewriter
+  public enum FeatureFlags
   {
-    private readonly RenamedAssertsMap _renamedAssertsMap;
-    private readonly AssertRenamer _assertRenamer;
-
-    public AssertRewriter (RenamedAssertsMap renamedAssertsMap, AssertRenamer assertRenamer)
-    {
-      _renamedAssertsMap = renamedAssertsMap;
-      _assertRenamer = assertRenamer;
-    }
-
-    public override SyntaxNode VisitMemberAccessExpression (MemberAccessExpressionSyntax node)
-    {
-      var maybeNewName = _renamedAssertsMap.TryGetSyntax (node.Expression, node.Name);
-
-      return maybeNewName.HasValue
-          ? _assertRenamer.Transform (node, maybeNewName.Value)
-          : node;
-    }
+    ExpectedException,
+    AssertRenaming,
   }
 }

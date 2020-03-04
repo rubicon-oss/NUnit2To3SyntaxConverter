@@ -25,10 +25,10 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
   [UsedImplicitly]
   public class CmdLineOptions
   {
-    public CmdLineOptions (string solutionPath, IEnumerable<string> conversions, string? msBuildVersion = null, string? msBuildPath = null)
+    public CmdLineOptions (string solutionPath, IEnumerable<FeatureFlags> featureFlags, string? msBuildVersion = null, string? msBuildPath = null)
     {
       SolutionPath = solutionPath;
-      Conversions = conversions;
+      FeatureFlags = featureFlags;
       MsBuildVersion = msBuildVersion;
       MsBuildPath = msBuildPath;
     }
@@ -36,8 +36,8 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
     [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
     public string SolutionPath { get; }
 
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {expected-exceptions, asserts, testfixture, setupfixture}")]
-    public IEnumerable<string> Conversions { get; }
+    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
+    public IEnumerable<FeatureFlags> FeatureFlags { get; }
 
     [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
     public string? MsBuildVersion { get; }

@@ -28,8 +28,8 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
   public class RenamedAssertsMap
   {
-    private IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> NewNameMap
-      => new Dictionary<string, IReadOnlyDictionary<string, string>>
+    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> s_newNameMap
+      = new Dictionary<string, IReadOnlyDictionary<string, string>>
          {
              {
                  "Text", new Dictionary<string, string>
@@ -58,17 +58,17 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
                  "Is.Not", new Dictionary<string, string>
                            {
                                { "InstanceOfType", "Is.Not.InstanceOf" },
-                               { "StringStarting", "Does.Not.StartWith" },
-                               { "StringEnding", "Does.Not.EndWith" },
-                               { "StringContaining", "Does.Not.Contain" },
-                               { "StringMatching", "Does.Not.Match" },
+                               { "StringStarting", "Does.Not.StartsWith" },
+                               { "StringEnding", "Does.Not.EndsWith" },
+                               { "StringContaining", "Does.Not.Contains" },
+                               { "StringMatching", "Does.Not.Matches" },
                            }
              },
          };
 
     public (ExpressionSyntax, SimpleNameSyntax)? TryGetSyntax (ExpressionSyntax expression, SimpleNameSyntax access)
     {
-      if (NewNameMap.TryGetValue (expression.WithoutTrivia().ToFullString(), out var methodMap))
+      if (s_newNameMap.TryGetValue (expression.WithoutTrivia().ToFullString(), out var methodMap))
       {
         if (methodMap.TryGetValue (access.Identifier.WithoutTrivia().ToString(), out var newName))
         {
