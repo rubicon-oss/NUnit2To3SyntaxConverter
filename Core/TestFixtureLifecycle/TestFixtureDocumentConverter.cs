@@ -30,14 +30,13 @@ namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
     {
       _attributeRewriter = new TestFixtureLifecycleAttributeRewriter (
           new TestFixtureSetupAttributeRenamer(),
-          new TestFixtureTeardownAttributeRenamer()
-          );
+          new TestFixtureTeardownAttributeRenamer());
     }
 
     public async Task<SyntaxNode> Convert (Document document)
-    { 
+    {
       var syntaxRoot = await document.GetSyntaxRootAsync()
-          ?? throw new ArgumentException("Document does not support syntax root.");
+                       ?? throw new ArgumentException ($"Document {document.Name} does not support syntax root.");
       return _attributeRewriter.Visit (syntaxRoot);
     }
   }
