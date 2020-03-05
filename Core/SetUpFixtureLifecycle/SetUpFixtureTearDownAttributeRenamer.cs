@@ -22,9 +22,9 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
-  public class SetUpFixtureTearDownAttributeRenamer : ISyntaxTransformer<AttributeSyntax, ValueTuple>
+  public class SetUpFixtureTearDownAttributeRenamer
   {
-    public AttributeSyntax Transform (AttributeSyntax node, ValueTuple context)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
       return node.Name.WithoutTrivia().ToString() == "TearDown"
           ? node.WithName (IdentifierName ("OneTimeTearDown"))

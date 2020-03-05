@@ -22,9 +22,9 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
-  public class SetUpFixtureSetUpAttributeRenamer : ISyntaxTransformer<AttributeSyntax, ValueTuple>
+  public class SetUpFixtureSetUpAttributeRenamer
   {
-    public AttributeSyntax Transform (AttributeSyntax node, ValueTuple context)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
       return node.Name.WithoutTrivia().ToString() == "SetUp" 
           ? node.WithName (IdentifierName ("OneTimeSetUp")) 

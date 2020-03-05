@@ -21,9 +21,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
-  public class TestFixtureTeardownAttributeRenamer: ISyntaxTransformer<AttributeSyntax, ValueTuple>
+  public class TestFixtureTeardownAttributeRenamer
   {
-    public AttributeSyntax Transform (AttributeSyntax node, ValueTuple context)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
       return node.Name.ToString() == "TestFixtureTearDown"
           ? node.WithName (SyntaxFactory.IdentifierName ("OneTimeTearDown"))

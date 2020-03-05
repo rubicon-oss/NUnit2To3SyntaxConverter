@@ -23,7 +23,7 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-  public class ExpectedExceptionAttributeRemover : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
+  public class ExpectedExceptionAttributeRemover
   {
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {

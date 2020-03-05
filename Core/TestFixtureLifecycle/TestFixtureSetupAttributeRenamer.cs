@@ -21,12 +21,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
-  public class TestFixtureSetupAttributeRenamer: ISyntaxTransformer<AttributeSyntax, ValueTuple>
+  public class TestFixtureSetupAttributeRenamer
   {
-    public AttributeSyntax Transform (AttributeSyntax node, ValueTuple context)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
       return node.Name.ToString() == "TestFixtureSetUp"
-          ? node.WithName (SyntaxFactory.IdentifierName ("OneTimeSetUp")) 
+          ? node.WithName (SyntaxFactory.IdentifierName ("OneTimeSetUp"))
           : node;
     }
   }
