@@ -36,7 +36,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
     [Value (0, Required = true, HelpText = "Path to a folder containing a solution file", MetaName = "solution")]
     public string SolutionPath { get; }
 
-    [Option ("features", Required = true, HelpText = "List of conversion steps to apply {ExpectedException, AssertRenaming}")]
+    [Option ("features", Required = true, HelpText = "List of conversion steps to apply: one or multiple of {ExpectedException, AssertRenaming, TestFixture, SetUpFixture}")]
     public IEnumerable<FeatureFlags> FeatureFlags { get; }
 
     [Option ("msbuildversion", Required = false, MetaValue = "VERSION")]
