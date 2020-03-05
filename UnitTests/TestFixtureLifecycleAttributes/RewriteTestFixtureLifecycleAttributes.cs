@@ -25,13 +25,6 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
 {
   public class RewriteTestFixtureLifecycleAttributes
   {
-    private AttributeListSyntax ParseAttributeList (string attributeList)
-    {
-      var member = attributeList + "void m(){}";
-      var memberSyntax = ParseMemberDeclaration (member);
-      return memberSyntax.AttributeLists.First();
-    }
-
     [Test]
     [TestCase ("[TestFixtureSetUp]", "[OneTimeSetUp]")]
     [TestCase ("[TestFixtureSetUp()]", "[OneTimeSetUp()]")]
@@ -83,6 +76,13 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
       var result = rewriter.Visit (attributeList);
 
       Assert.That (result, Is.EquivalentTo (ParseMemberDeclaration (expected)));
+    }
+    
+    private AttributeListSyntax ParseAttributeList (string attributeList)
+    {
+      var member = attributeList + "void m(){}";
+      var memberSyntax = ParseMemberDeclaration (member);
+      return memberSyntax.AttributeLists.First();
     }
   }
 }

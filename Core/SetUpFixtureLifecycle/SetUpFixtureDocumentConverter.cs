@@ -30,8 +30,12 @@ namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
       var semantic = await document.GetSemanticModelAsync()
                      ?? throw new ArgumentException ("Document does not support a semantic model");
 
-      return new SetUpFixtureLifeCycleRewriter (semantic, new SetUpFixtureSetUpAttributeRenamer(), new SetUpFixtureTearDownAttributeRenamer())
-          .Visit (syntax);
+      var rewriter = new SetUpFixtureLifeCycleRewriter (
+          semantic,
+          new SetUpFixtureSetUpAttributeRenamer(),
+          new SetUpFixtureTearDownAttributeRenamer());
+
+      return rewriter.Visit (syntax);
     }
   }
 }

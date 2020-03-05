@@ -37,7 +37,9 @@ namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 
     public override SyntaxNode VisitAttribute (AttributeSyntax node)
     {
-      return _tearDownRenamer.Transform (_setUpRenamer.Transform (node, default), default);
+      return _tearDownRenamer.Transform (
+          _setUpRenamer.Transform (node, default),
+          default);
     }
   }
 }

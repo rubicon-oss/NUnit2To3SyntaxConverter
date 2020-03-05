@@ -37,8 +37,7 @@ namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
       _documentSemanticModel = documentSemanticModel;
       _lifeCycleAttributeRewriter = new SetUpFixtureLifeCycleAttributeRewriter (
           setUpAttributeRenamer,
-          tearDownAttributeRenamer
-          );
+          tearDownAttributeRenamer);
     }
 
     public override SyntaxNode VisitClassDeclaration (ClassDeclarationSyntax node)
