@@ -21,5 +21,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
   {
     ExpectedException,
     AssertRenaming,
+    TestFixture,
+    SetUpFixture,
   }
 }

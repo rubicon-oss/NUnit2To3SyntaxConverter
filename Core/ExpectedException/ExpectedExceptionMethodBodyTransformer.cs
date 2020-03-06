@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -25,7 +25,7 @@ using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
-  public class ExpectedExceptionMethodBodyTransformer : ISyntaxTransformer<MethodDeclarationSyntax, IExpectedExceptionModel>
+  public class ExpectedExceptionMethodBodyTransformer
   {
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {

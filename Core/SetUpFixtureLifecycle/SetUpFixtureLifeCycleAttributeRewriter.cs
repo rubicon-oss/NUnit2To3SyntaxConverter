@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -16,25 +16,29 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NUnit2To3SyntaxConverter.ExpectedException
+namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
-  public class ExpectedExceptionDocumentConverter : IDocumentConverter
+  public class SetUpFixtureLifeCycleAttributeRewriter : CSharpSyntaxRewriter
   {
-    public async Task<SyntaxNode> Convert (Document document)
-    {
-      var semanticModel = await document.GetSemanticModelAsync()
-                          ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a semantic model.");
-      var syntaxRoot = await document.GetSyntaxRootAsync()
-                       ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a syntax tree.");
+    private readonly SetUpFixtureSetUpAttributeRenamer _setUpRenamer;
+    private readonly SetUpFixtureTearDownAttributeRenamer _tearDownRenamer;
 
-      var rewriter = new ExpectedExceptionRewriter (
-          semanticModel,
-          new ExpectedExceptionMethodBodyTransformer(),
-          new ExpectedExceptionAttributeRemover());
-      return rewriter.Visit (syntaxRoot);
+    public SetUpFixtureLifeCycleAttributeRewriter (
+        SetUpFixtureSetUpAttributeRenamer setUpRenamer,
+        SetUpFixtureTearDownAttributeRenamer tearDownRenamer)
+    {
+      _setUpRenamer = setUpRenamer;
+      _tearDownRenamer = tearDownRenamer;
+    }
+
+    public override SyntaxNode VisitAttribute (AttributeSyntax node)
+    {
+      var withRenamedSetUps = _setUpRenamer.Transform (node);
+      return _tearDownRenamer.Transform (withRenamedSetUps);
     }
   }
 }

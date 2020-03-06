@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -16,25 +16,19 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace NUnit2To3SyntaxConverter.ExpectedException
+namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
-  public class ExpectedExceptionDocumentConverter : IDocumentConverter
+  public class SetUpFixtureSetUpAttributeRenamer
   {
-    public async Task<SyntaxNode> Convert (Document document)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
-      var semanticModel = await document.GetSemanticModelAsync()
-                          ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a semantic model.");
-      var syntaxRoot = await document.GetSyntaxRootAsync()
-                       ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a syntax tree.");
-
-      var rewriter = new ExpectedExceptionRewriter (
-          semanticModel,
-          new ExpectedExceptionMethodBodyTransformer(),
-          new ExpectedExceptionAttributeRemover());
-      return rewriter.Visit (syntaxRoot);
+      return node.Name.WithoutTrivia().ToString() == "SetUp" 
+          ? node.WithName (IdentifierName ("OneTimeSetUp")) 
+          : node;
     }
   }
 }

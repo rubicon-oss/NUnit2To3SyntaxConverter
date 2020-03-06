@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -19,22 +19,23 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 
-namespace NUnit2To3SyntaxConverter.ExpectedException
+namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
-  public class ExpectedExceptionDocumentConverter : IDocumentConverter
+  public class SetUpFixtureDocumentConverter : IDocumentConverter
   {
     public async Task<SyntaxNode> Convert (Document document)
     {
-      var semanticModel = await document.GetSemanticModelAsync()
-                          ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a semantic model.");
-      var syntaxRoot = await document.GetSyntaxRootAsync()
-                       ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a syntax tree.");
+      var syntax = await document.GetSyntaxRootAsync()
+                   ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a syntax tree.");
+      var semantic = await document.GetSemanticModelAsync()
+                     ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a semantic model.");
 
-      var rewriter = new ExpectedExceptionRewriter (
-          semanticModel,
-          new ExpectedExceptionMethodBodyTransformer(),
-          new ExpectedExceptionAttributeRemover());
-      return rewriter.Visit (syntaxRoot);
+      var rewriter = new SetUpFixtureLifeCycleRewriter (
+          semantic,
+          new SetUpFixtureSetUpAttributeRenamer(),
+          new SetUpFixtureTearDownAttributeRenamer());
+
+      return rewriter.Visit (syntax);
     }
   }
 }

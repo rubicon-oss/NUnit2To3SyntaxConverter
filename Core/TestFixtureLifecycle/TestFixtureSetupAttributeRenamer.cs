@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -16,25 +16,18 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NUnit2To3SyntaxConverter.ExpectedException
+namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
-  public class ExpectedExceptionDocumentConverter : IDocumentConverter
+  public class TestFixtureSetupAttributeRenamer
   {
-    public async Task<SyntaxNode> Convert (Document document)
+    public AttributeSyntax Transform (AttributeSyntax node)
     {
-      var semanticModel = await document.GetSemanticModelAsync()
-                          ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a semantic model.");
-      var syntaxRoot = await document.GetSyntaxRootAsync()
-                       ?? throw new ArgumentException ($"Document '{document.FilePath}' does not support providing a syntax tree.");
-
-      var rewriter = new ExpectedExceptionRewriter (
-          semanticModel,
-          new ExpectedExceptionMethodBodyTransformer(),
-          new ExpectedExceptionAttributeRemover());
-      return rewriter.Visit (syntaxRoot);
+      return node.Name.ToString() == "TestFixtureSetUp"
+          ? node.WithName (SyntaxFactory.IdentifierName ("OneTimeSetUp"))
+          : node;
     }
   }
 }

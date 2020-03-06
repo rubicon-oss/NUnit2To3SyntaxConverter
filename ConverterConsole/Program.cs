@@ -25,6 +25,8 @@ using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.MSBuild;
 using NUnit2To3SyntaxConverter.ExpectedException;
 using NUnit2To3SyntaxConverter.RenamedAsserts;
+using NUnit2To3SyntaxConverter.SetUpFixtureLifecycle;
+using NUnit2To3SyntaxConverter.TestFixtureLifecycle;
 
 namespace NUnit2To3SyntaxConverter.ConverterConsole
 {
@@ -75,6 +77,9 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
       {
           FeatureFlags.ExpectedException => new ExpectedExceptionDocumentConverter(),
           FeatureFlags.AssertRenaming => new AssertRenamingDocumentConverter(),
+          FeatureFlags.SetUpFixture => new SetUpFixtureDocumentConverter(),
+          FeatureFlags.TestFixture => new TestFixtureDocumentConverter(),
+
           _ => throw new InvalidOperationException ("Exhaustive switch is not exhaustive.")
       };
     }

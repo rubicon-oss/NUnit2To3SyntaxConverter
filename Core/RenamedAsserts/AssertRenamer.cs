@@ -20,7 +20,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
-  public class AssertRenamer : ISyntaxTransformer<MemberAccessExpressionSyntax, (ExpressionSyntax, SimpleNameSyntax)>
+  public class AssertRenamer
   {
     public MemberAccessExpressionSyntax Transform (MemberAccessExpressionSyntax node, (ExpressionSyntax, SimpleNameSyntax) context)
     {
