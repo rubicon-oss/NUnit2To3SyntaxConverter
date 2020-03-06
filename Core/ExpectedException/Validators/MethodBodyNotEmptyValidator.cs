@@ -15,20 +15,18 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using NUnit2To3SyntaxConverter.Extensions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using NUnit2To3SyntaxConverter.Validation;
 
-namespace NUnit2To3SyntaxConverter.Validation
+namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
-  public static class Validators
+  public class MethodBodyNotEmptyValidator : IValidator<MethodDeclarationSyntax>
   {
-    public static List<IValidationError> ValidateMultiple<TInput> (TInput input, params IValidator<TInput>[] validators)
+    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax method)
     {
-      return validators.Select (validator => validator.Validate (input))
-          .WhereNotNull()
-          .ToList();
+      if (method.Body == null || method.Body.Statements.Count == 0)
+        yield return new ExpectedExceptionValidationError (method, "Unable to convert method with empty body.");
     }
   }
 }

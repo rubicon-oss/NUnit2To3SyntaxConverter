@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Validation;
 
@@ -22,15 +23,15 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
   public class LastStatementIsExpressionStatementValidator : IValidator<MethodDeclarationSyntax>
   {
-    public IValidationError? Validate (MethodDeclarationSyntax input)
+    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax input)
     {
       var lastStatement = input.Body?.Statements.LastOrDefault();
       if (lastStatement == null
           || lastStatement is ExpressionStatementSyntax
           || lastStatement is ThrowStatementSyntax)
-        return null;
+        yield break;
 
-      return new ExpectedExceptionValidationError (input, "Unable to convert method with non expression statement in last position.");
+      yield return new ExpectedExceptionValidationError (input, "Unable to convert method with non expression statement in last position.");
     }
   }
 }

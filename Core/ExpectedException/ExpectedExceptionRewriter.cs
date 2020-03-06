@@ -21,8 +21,8 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using NUnit2To3SyntaxConverter.ExpectedException.Validators;
+using NUnit2To3SyntaxConverter.Validation;
 using Serilog;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
@@ -32,6 +32,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
     private readonly ExpectedExceptionAttributeRemover _attributeRemover;
     private readonly ExpectedExceptionMethodBodyTransformer _methodBodyTransformer;
     private readonly SemanticModel _semanticModel;
+    private readonly IValidator<MethodDeclarationSyntax> _validator;
 
     public ExpectedExceptionRewriter (
         SemanticModel semanticModel,
@@ -41,15 +42,12 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       _semanticModel = semanticModel;
       _methodBodyTransformer = methodBodyTransformer;
       _attributeRemover = attributeRemover;
+      _validator = new ExpectedExceptionValidator();
     }
 
     public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
     {
-      var errors = Validation.Validators.ValidateMultiple (
-          node,
-          new EmptyMethodBodyValidator(),
-          new AssertInLastStatementValidator(),
-          new LastStatementIsExpressionStatementValidator());
+      var errors = _validator.Validate(node).ToList();
       if (errors.Count > 0)
       {
         foreach (var error in errors)

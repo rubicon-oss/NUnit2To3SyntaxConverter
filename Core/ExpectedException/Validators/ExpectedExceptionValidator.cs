@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -15,18 +15,25 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
-  public class EmptyMethodBodyValidator : IValidator<MethodDeclarationSyntax>
+  public class ExpectedExceptionValidator : IValidator<MethodDeclarationSyntax>
   {
-    public IValidationError? Validate (MethodDeclarationSyntax method)
+    private readonly IEnumerable<IValidator<MethodDeclarationSyntax>> _innerValidators
+        = ImmutableList.Create<IValidator<MethodDeclarationSyntax>> (
+            new MethodBodyNotEmptyValidator(),
+            new AssertInLastStatementValidator(),
+            new LastStatementIsExpressionStatementValidator());
+
+    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax input)
     {
-      if (method.Body == null || method.Body.Statements.Count == 0)
-        return new ExpectedExceptionValidationError (method, "Unable to convert method with empty body.");
-      return null;
+      return _innerValidators.SelectMany (validator => validator.Validate (input));
     }
   }
 }
