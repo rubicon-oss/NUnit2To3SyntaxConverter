@@ -47,7 +47,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
     {
-      var errors = _validator.Validate(node).ToList();
+      var errors = _validator.Validate (node).ToList();
+
       if (errors.Count > 0)
       {
         foreach (var error in errors)
