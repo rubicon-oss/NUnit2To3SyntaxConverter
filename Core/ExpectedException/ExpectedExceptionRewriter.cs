@@ -64,8 +64,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       if (expectedExceptionAttribute == null) return node;
 
-      return _attributeRemover.Transform (_methodBodyTransformer.Transform (node, expectedExceptionAttribute), expectedExceptionAttribute)
-          .WithAdditionalAnnotations (Formatter.Annotation);
+      var withTransformedBody = _methodBodyTransformer.Transform (node, expectedExceptionAttribute);
+      return _attributeRemover.Transform (withTransformedBody, expectedExceptionAttribute);
     }
 
     private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)

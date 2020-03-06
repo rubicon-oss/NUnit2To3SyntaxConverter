@@ -37,8 +37,8 @@ namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 
     public override SyntaxNode VisitAttribute (AttributeSyntax node)
     {
-      return _teardownRewriter.Transform (
-          _setupRewriter.Transform (node));
+      var withRenamedSetUps = _setupRewriter.Transform (node);
+      return _teardownRewriter.Transform (withRenamedSetUps);
     }
   }
 }
