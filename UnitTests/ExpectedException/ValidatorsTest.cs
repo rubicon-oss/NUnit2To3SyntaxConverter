@@ -34,9 +34,13 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void MethodBodyValidator_ValidatesWithError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new EmptyMethodBodyValidator();
+      var validator = new MethodBodyNotEmptyValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax).ToList();
+
+      Assert.That (errors, Has.One.Items);
+
+      var error = errors.Single()!;
 
       Assert.That (error, Is.Not.Null);
       Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
@@ -54,11 +58,11 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void MethodBodyValidator_ValidatesWithoutError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new EmptyMethodBodyValidator();
+      var validator = new MethodBodyNotEmptyValidator();
 
       var error = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Null);
+      Assert.That (error, Is.Empty);
     }
 
     [Test]
@@ -69,7 +73,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new AssertInLastStatementValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax).ToList();
+
+      Assert.That(errors, Has.One.Items);
+      var error = errors.Single()!;
 
       Assert.That (error, Is.Not.Null);
       Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
@@ -90,7 +97,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       var error = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Null);
+      Assert.That (error, Is.Empty);
     }
 
     [Test]
@@ -102,7 +109,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new LastStatementIsExpressionStatementValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax).ToList();
+
+      Assert.That(errors, Has.One.Items);
+      var error = errors.Single()!;
 
       Assert.That (error, Is.Not.Null);
       Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
@@ -122,7 +132,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       var error = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Null);
+      Assert.That (error, Is.Empty);
     }
 
     [Test]
@@ -135,12 +145,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void AllAsserts_ValidateWithError (string method, params string[] reasons)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
+      var validator = new ExpectedExceptionValidator();
 
-      var errors = Validators.ValidateMultiple (
-          methodSyntax,
-          new EmptyMethodBodyValidator(),
-          new AssertInLastStatementValidator(),
-          new LastStatementIsExpressionStatementValidator());
+      var errors = validator.Validate (methodSyntax).ToList();
 
       Assert.That (errors, Is.Not.Empty);
       Assert.That (errors.Select (e => e.Reason), Is.EquivalentTo (reasons));
@@ -151,12 +158,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void AllAsserts_ValidateWithout (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
+      var validator = new ExpectedExceptionValidator();
 
-      var errors = Validators.ValidateMultiple (
-          methodSyntax,
-          new EmptyMethodBodyValidator(),
-          new AssertInLastStatementValidator(),
-          new LastStatementIsExpressionStatementValidator());
+      var errors = validator.Validate (methodSyntax);
+
 
       Assert.That (errors, Is.Empty);
     }
