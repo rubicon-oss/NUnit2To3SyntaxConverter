@@ -77,7 +77,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
 
       Assert.That (result, Is.EquivalentTo (ParseMemberDeclaration (expected)));
     }
-    
+
     private AttributeListSyntax ParseAttributeList (string attributeList)
     {
       var member = attributeList + "void m(){}";

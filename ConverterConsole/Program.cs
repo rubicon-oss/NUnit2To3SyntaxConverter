@@ -79,7 +79,7 @@ namespace NUnit2To3SyntaxConverter.ConverterConsole
           FeatureFlags.AssertRenaming => new AssertRenamingDocumentConverter(),
           FeatureFlags.SetUpFixture => new SetUpFixtureDocumentConverter(),
           FeatureFlags.TestFixture => new TestFixtureDocumentConverter(),
-          
+
           _ => throw new InvalidOperationException ("Exhaustive switch is not exhaustive.")
       };
     }
