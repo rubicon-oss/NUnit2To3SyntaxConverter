@@ -28,24 +28,22 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
   public class RemoveExpectedAttributeTest
   {
-    private const string c_testCaseFile = "resources/RemoveExpectedAttributeTestCases.cs";
-
     [Test]
-    [TestCase ("SingleAttributeInAttributeListLast")]
-    [TestCase ("SingleAttributeInAttributeListFirst")]
-    [TestCase ("MultipleAttributesInAttributeListFirst")]
-    [TestCase ("MultipleAttributesInAttributeListLast")]
-    public void ExpectedExceptionAttributeRemover_RemovesSingleAttribute (string methodName)
+    [TestCase ("[Test]\r\n[ExpectedException]")]
+    [TestCase ("[ExpectedException]\r\n[Test]")]
+    [TestCase ("[Test, ExpectedException]")]
+    [TestCase ("[ExpectedException, Test]")]
+    public void ExpectedExceptionAttributeRemover_RemovesSingleAttribute (string attributeLists)
     {
       var attributeRemover = new ExpectedExceptionAttributeRemover();
-      var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_testCaseFile, methodName);
+      var (_, methodSyntax) = CompiledSourceFileProvider.CompileAttributeLists (attributeLists);
+
       var model = new Mock<IExpectedExceptionModel>();
       model.Setup (m => m.GetAttributeSyntax())
           .Returns (
               Task<SyntaxNode>.FromResult (
                   methodSyntax.AttributeLists
                       .SelectMany (list => list.Attributes).First (attr => attr.Name.ToString() == "ExpectedException")));
-
 
       var rewritten = attributeRemover.Transform (methodSyntax, model.Object);
 

@@ -25,7 +25,28 @@ namespace NUnit2To3SyntaxConverter.UnitTests.SetupFixtureLifeCycleAttributes
 {
   public class SetUpFixtureRewriteTest
   {
-    public (SetUpFixtureLifeCycleRewriter, ClassDeclarationSyntax) RewriterFor (string file, string className)
+    private const string c_testCasesSourceFileName = "resources/SetUpFixtureTests.cs";
+    
+    [Test]
+    [TestCase ("SetUpFixtureWithSetupOnly")]
+    [TestCase ("SetUpFixtureWithSetupAndTeardown")]
+    [TestCase ("SetUpFixtureWithTeardownOnly")]
+    [TestCase ("SetUpFixtureWithOtherMethods")]
+    [TestCase ("SetUpFixtureByInheritance")]
+    public void TestSetUpFixtureRewrite_RewriteAttributeToNewNames (string className)
+    {
+      var expectedClass = className + "Transformed";
+      var expectedSyntax = CompiledSourceFileProvider.LoadClass (c_testCasesSourceFileName, expectedClass);
+      var (rewriter, classSyntax) = CreateRewriterFor (c_testCasesSourceFileName, className);
+
+      var result = (ClassDeclarationSyntax) rewriter.Visit (classSyntax);
+
+      Assert.That (
+          result.Members.ToFullString(),
+          Is.EqualTo (expectedSyntax.Members.ToFullString()));
+    }
+
+    private (SetUpFixtureLifeCycleRewriter, ClassDeclarationSyntax) CreateRewriterFor (string file, string className)
     {
       var (semantic, root) = CompiledSourceFileProvider.LoadCompilationFromFile (file);
       var rewriter = new SetUpFixtureLifeCycleRewriter (
@@ -36,25 +57,6 @@ namespace NUnit2To3SyntaxConverter.UnitTests.SetupFixtureLifeCycleAttributes
           .OfType<ClassDeclarationSyntax>()
           .Single (syntax => syntax.Identifier.ToString() == className);
       return (rewriter, method);
-    }
-
-    [Test]
-    [TestCase ("resources/SetUpFixtureTests.cs", "SetUpFixtureWithSetupOnly")]
-    [TestCase ("resources/SetUpFixtureTests.cs", "SetUpFixtureWithSetupAndTeardown")]
-    [TestCase ("resources/SetUpFixtureTests.cs", "SetUpFixtureWithTeardownOnly")]
-    [TestCase ("resources/SetUpFixtureTests.cs", "SetUpFixtureWithOtherMethods")]
-    [TestCase ("resources/SetUpFixtureTests.cs", "SetUpFixtureByInheritance")]
-    public void TestSetUpFixtureRewrite (string file, string className)
-    {
-      var expectedClass = className + "Transformed";
-      var expectedSyntax = CompiledSourceFileProvider.LoadClass (file, expectedClass);
-      var (rewriter, classSyntax) = RewriterFor (file, className);
-
-      var result = (ClassDeclarationSyntax) rewriter.Visit (classSyntax);
-
-      Assert.That (
-          result.Members.ToFullString(),
-          Is.EqualTo (expectedSyntax.Members.ToFullString()));
     }
   }
 }

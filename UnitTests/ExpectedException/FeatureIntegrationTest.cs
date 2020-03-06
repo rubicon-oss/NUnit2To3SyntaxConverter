@@ -40,7 +40,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("WontConvertAssertionStatement")]
     [TestCase ("WontConvertEmptyMethod")]
     [TestCase ("WontConvertWithNonExpressionStatementInLastPosition")]
-    public void ExpectedExceptionRewritesToExpectedCases (string method)
+    public void ExpectedExceptionRewriter_RewritesToExpectedCases (string method)
     {
       var (rewriter, syntax) = CreateRewriterFor (c_testCasesSourceFileName, method);
       var expectedSyntax = CompiledSourceFileProvider.LoadMethod (c_expectedTestResultsSourceFileName, method);

@@ -29,16 +29,22 @@ namespace NUnit2To3SyntaxConverter.Unittests.Helpers
   {
     public static AttributeData CompileAttribute (string attribute)
     {
+      var (methodSymbol, _) = CompileAttributeLists (attribute);
+      return methodSymbol.GetAttributes().Single();
+    }
+
+    public static (IMethodSymbol, MethodDeclarationSyntax) CompileAttributeLists (string attributeList)
+    {
       var compilationTemplate =
-          $"namespace TestCompilations {{ using System; using Nunit.Framework; public class TestClass {{ {attribute} public void Test(){{}} }}";
+          $"namespace TestCompilations {{ using System; using Nunit.Framework; public class TestClass {{ {attributeList} public void Test(){{}} }}";
       var (model, root) = LoadSemanticModel (compilationTemplate);
-      var method = root.DescendantNodes()
+
+      var methodSyntax = root.DescendantNodes()
           .OfType<MethodDeclarationSyntax>()
           .First();
 
-      return model.GetDeclaredSymbol (method)
-          .GetAttributes()
-          .First();
+      var methodSymbol = model.GetDeclaredSymbol (methodSyntax);
+      return (methodSymbol, methodSyntax);
     }
 
     public static MethodDeclarationSyntax LoadMethod (string file, string methodName)
@@ -49,7 +55,7 @@ namespace NUnit2To3SyntaxConverter.Unittests.Helpers
           .Single (syntax => syntax.Identifier.ToString() == methodName);
       return method;
     }
-    
+
     public static ClassDeclarationSyntax LoadClass (string file, string className)
     {
       var (_, root) = LoadCompilationFromFile (file);
@@ -72,7 +78,6 @@ namespace NUnit2To3SyntaxConverter.Unittests.Helpers
                   typeof (object).Assembly.Location))
           .AddReferences (MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.v2.6.2.dll"))
           .AddSyntaxTrees (tree);
-
 
       var model = compilation.GetSemanticModel (tree);
       return (model, root);

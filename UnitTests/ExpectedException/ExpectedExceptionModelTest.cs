@@ -74,14 +74,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message\")]", "test message", "Exact")]
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message regex\", MatchType = MessageMatch.Regex)]", "test message regex", "Regex")]
     [TestCase ("[ExpectedException (ExpectedMessage = \"test message exact\", MatchType = MessageMatch.Exact)]", "test message exact", "Exact")]
-    [TestCase (
-        "[ExpectedException (ExpectedMessage = \"test message startsWith\", MatchType = MessageMatch.StartsWith)]",
-        "test message startsWith",
-        "StartsWith")]
-    [TestCase (
-        "[ExpectedException (ExpectedMessage = \"test message contains\", MatchType = MessageMatch.Contains)]",
-        "test message contains",
-        "Contains")]
+    [TestCase ("[ExpectedException (ExpectedMessage = \"test message startsWith\", MatchType = MessageMatch.StartsWith)]", "test message startsWith", "StartsWith")]
+    [TestCase ("[ExpectedException (ExpectedMessage = \"test message contains\", MatchType = MessageMatch.Contains)]", "test message contains", "Contains")]
     public void CreateFromAttributeData_UsesExpectedMessage (string attribute, string message, string matchType)
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute (attribute);
@@ -146,7 +140,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
           "[ExpectedException (typeof(DivideByZeroException), ExpectedExceptionName = \"DivideByZeroException\")]");
 
       Assert.That (
-          () => { ExpectedExceptionModel.CreateFromAttributeData (attributeData); },
+          () => ExpectedExceptionModel.CreateFromAttributeData (attributeData),
           Throws.Exception.With.InstanceOf<InvalidOperationException>());
     }
 
@@ -202,7 +196,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void ConvertToConstraint_ConvertsExpectedExceptionMessageWithCustomMatcher ()
     {
       var attributeData =
-          CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(ExpectedMessage = \"Test Message\"), MatchType = MessageMatch.Regex]");
+          CompiledSourceFileProvider.CompileAttribute ("[ExpectedException(ExpectedMessage = \"Test Message\", MatchType = MessageMatch.Regex)]");
       IExpectedExceptionModel expectedException
           = new ExpectedExceptionModel (
               attributeData,

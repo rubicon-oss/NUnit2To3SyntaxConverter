@@ -19,7 +19,6 @@ using System.Linq;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException.Validators;
 using NUnit2To3SyntaxConverter.Unittests.Helpers;
-using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
@@ -39,12 +38,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var errors = validator.Validate (methodSyntax).ToList();
 
       Assert.That (errors, Has.One.Items);
+      var error = errors.Single();
 
-      var error = errors.Single()!;
-
-      Assert.That (error, Is.Not.Null);
-      Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
-      Assert.That (error!.Reason, Is.EqualTo ("Unable to convert method with empty body."));
+      Assert.That (error.Category, Is.EqualTo (c_errorCategory));
+      Assert.That (error.Reason, Is.EqualTo ("Unable to convert method with empty body."));
       Assert.That (error.MethodName, Is.EqualTo (method));
     }
 
@@ -60,9 +57,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new MethodBodyNotEmptyValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Empty);
+      Assert.That (errors, Is.Empty);
     }
 
     [Test]
@@ -76,11 +73,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var errors = validator.Validate (methodSyntax).ToList();
 
       Assert.That(errors, Has.One.Items);
-      var error = errors.Single()!;
-
-      Assert.That (error, Is.Not.Null);
-      Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
-      Assert.That (error!.Reason, Is.EqualTo ("Unable to convert method with Assertion in last statement."));
+      var error = errors.Single();
+      
+      Assert.That (error.Category, Is.EqualTo (c_errorCategory));
+      Assert.That (error.Reason, Is.EqualTo ("Unable to convert method with Assertion in last statement."));
       Assert.That (error.MethodName, Is.EqualTo (method));
     }
 
@@ -95,9 +91,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new AssertInLastStatementValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Empty);
+      Assert.That (errors, Is.Empty);
     }
 
     [Test]
@@ -112,11 +108,10 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var errors = validator.Validate (methodSyntax).ToList();
 
       Assert.That(errors, Has.One.Items);
-      var error = errors.Single()!;
+      var error = errors.Single();
 
-      Assert.That (error, Is.Not.Null);
-      Assert.That (error!.Category, Is.EqualTo (c_errorCategory));
-      Assert.That (error!.Reason, Is.EqualTo ("Unable to convert method with non expression statement in last position."));
+      Assert.That (error.Category, Is.EqualTo (c_errorCategory));
+      Assert.That (error.Reason, Is.EqualTo ("Unable to convert method with non expression statement in last position."));
       Assert.That (error.MethodName, Is.EqualTo (method));
     }
 
@@ -130,9 +125,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new LastStatementIsExpressionStatementValidator();
 
-      var error = validator.Validate (methodSyntax);
+      var errors = validator.Validate (methodSyntax);
 
-      Assert.That (error, Is.Empty);
+      Assert.That (errors, Is.Empty);
     }
 
     [Test]
@@ -142,7 +137,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     [TestCase ("HasIfInLastPosition", "Unable to convert method with non expression statement in last position.")]
     [TestCase ("HasTryInLastPosition", "Unable to convert method with non expression statement in last position.")]
     [TestCase ("HasLoopInLastPosition", "Unable to convert method with non expression statement in last position.")]
-    public void AllAsserts_ValidateWithError (string method, params string[] reasons)
+    public void AllValidators_ValidateWithError (string method, params string[] reasons)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new ExpectedExceptionValidator();
@@ -155,13 +150,12 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
     [Test]
     [TestCase ("ShouldValidateWithoutErrors")]
-    public void AllAsserts_ValidateWithout (string method)
+    public void AllValidators_ValidateWithoutErrors (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new ExpectedExceptionValidator();
 
       var errors = validator.Validate (methodSyntax);
-
 
       Assert.That (errors, Is.Empty);
     }
