@@ -146,7 +146,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new ExpectedExceptionValidator();
 
-      var errors = validator.Validate(methodSyntax).ToList();
+      var errors = validator.Validate (methodSyntax).ToList();
 
       Assert.That (errors, Is.Not.Empty);
       Assert.That (errors.Select (e => e.Reason), Is.EquivalentTo (reasons));
@@ -159,7 +159,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
       var validator = new ExpectedExceptionValidator();
 
-      var errors = validator.Validate(methodSyntax);
+      var errors = validator.Validate (methodSyntax);
+
 
       Assert.That (errors, Is.Empty);
     }
