@@ -38,7 +38,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 
       var errors = validator.Validate (methodSyntax).ToList();
 
-      Assert.That(errors, Has.One.Items);
+      Assert.That (errors, Has.One.Items);
+
       var error = errors.Single()!;
 
       Assert.That (error, Is.Not.Null);
