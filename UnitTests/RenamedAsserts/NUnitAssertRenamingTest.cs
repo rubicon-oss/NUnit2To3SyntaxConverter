@@ -21,6 +21,7 @@ using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
 {
+  [TestFixture]
   public class NUnitAssertRenamingTest
   {
     [Test]
@@ -42,7 +43,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Is.Not.StringContaining (...)", "Does.Not.Contains (...)")]
     [TestCase ("Is.Not.StringEnding (...)", "Does.Not.EndsWith (...)")]
     [TestCase ("Is.Not.StringMatching (...)", "Does.Not.Matches (...)")]
-    public void TestAllSimpleCases (string toRename, string expected)
+    public void NUnitAssertRewriting_RewritesToNewAssertNames (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
       var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
@@ -60,10 +61,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Text.\n        DoesNotStartWith (...)", "Does.Not.\n        StartWith (...)")]
     [TestCase ("Text\n        .StartsWith (...)", "Does\n        .StartWith (...)")]
     [TestCase ("Text\n        .StartsWith(...)", "Does\n        .StartWith(...)")]
-    [TestCase (
-        "Method.Call.Inner( Assert.That(\"string\", Is.StringStarting (...)))",
-        "Method.Call.Inner( Assert.That(\"string\", Does.StartWith (...)))")]
-    public void DoesHandleWhitespace (string toRename, string expected)
+    [TestCase ("Method.Call.Inner( Assert.That(\"string\", Is.StringStarting (...)))", "Method.Call.Inner( Assert.That(\"string\", Does.StartWith (...)))")]
+    public void NUnitAssertRewriting_PreservesWhiteSpace (string toRename, string expected)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
       var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
@@ -78,7 +77,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
     [TestCase ("Text")]
     [TestCase ("Text.Other (...)")]
     [TestCase ("Is.Other (...)")]
-    public void DoesNotRewriteNonChangedAsserts (string toRename)
+    public void NUnitAssertRewriting_DoesNotRewriteNonChangedAsserts (string toRename)
     {
       var expression = SyntaxFactory.ParseExpression (toRename);
       var rewriter = new AssertRewriter (new RenamedAssertsMap(), new AssertRenamer());
