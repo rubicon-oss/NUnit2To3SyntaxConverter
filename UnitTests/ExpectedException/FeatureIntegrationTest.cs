@@ -24,6 +24,7 @@ using NUnit2To3SyntaxConverter.Unittests.Helpers;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
+  [TestFixture]
   public class FeatureIntegrationTest
   {
     private const string c_testCasesSourceFileName = "/resources/ExpectedExceptionIntegrationTestCases.cs";

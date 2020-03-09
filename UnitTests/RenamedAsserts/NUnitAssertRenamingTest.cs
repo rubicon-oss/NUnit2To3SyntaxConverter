@@ -21,6 +21,7 @@ using NUnit2To3SyntaxConverter.RenamedAsserts;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.RenamedAsserts
 {
+  [TestFixture]
   public class NUnitAssertRenamingTest
   {
     [Test]

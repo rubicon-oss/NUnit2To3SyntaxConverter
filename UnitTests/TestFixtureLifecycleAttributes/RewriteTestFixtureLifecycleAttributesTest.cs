@@ -23,14 +23,17 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
 {
-  public class RewriteTestFixtureLifecycleAttributes
+  [TestFixture]
+  public class RewriteTestFixtureLifecycleAttributesTest
   {
     [Test]
     [TestCase ("[TestFixtureSetUp]", "[OneTimeSetUp]")]
     [TestCase ("[TestFixtureSetUp()]", "[OneTimeSetUp()]")]
+    [TestCase ("[TestFixtureSetUp(...)]", "[OneTimeSetUp(...)]")]
     [TestCase ("[TestFixtureSetUp ()]", "[OneTimeSetUp ()]")]
     [TestCase ("[TestFixtureSetUp () ]", "[OneTimeSetUp () ]")]
     [TestCase ("[ TestFixtureSetUp () ]", "[ OneTimeSetUp () ]")]
+    [TestCase ("[ TestFixtureSetUp (...) ]", "[ OneTimeSetUp (...) ]")]
     public void TestFixtureAttributeRewriter_RewritesSingleSetupAttribute (string attribute, string expected)
     {
       var attributeList = ParseAttributeList (attribute);
@@ -46,9 +49,11 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
     [Test]
     [TestCase ("[TestFixtureTearDown]", "[OneTimeTearDown]")]
     [TestCase ("[TestFixtureTearDown()]", "[OneTimeTearDown()]")]
+    [TestCase ("[TestFixtureTearDown(...)]", "[OneTimeTearDown(...)]")]
     [TestCase ("[TestFixtureTearDown ()]", "[OneTimeTearDown ()]")]
     [TestCase ("[TestFixtureTearDown () ]", "[OneTimeTearDown () ]")]
     [TestCase ("[ TestFixtureTearDown () ]", "[ OneTimeTearDown () ]")]
+    [TestCase ("[ TestFixtureTearDown (...) ]", "[ OneTimeTearDown (...) ]")]
     public void TestFixtureAttributeRewriter_RewritesSingleTearDownAttribute (string attribute, string expected)
     {
       var attributeList = ParseAttributeList (attribute);

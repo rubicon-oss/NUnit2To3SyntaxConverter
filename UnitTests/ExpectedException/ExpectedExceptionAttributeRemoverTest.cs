@@ -26,7 +26,8 @@ using NUnit2To3SyntaxConverter.Unittests.Helpers;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
-  public class RemoveExpectedAttributeTest
+  [TestFixture]
+  public class ExpectedExceptionAttributeRemoverTest
   {
     [Test]
     [TestCase ("[Test]\r\n[ExpectedException]")]

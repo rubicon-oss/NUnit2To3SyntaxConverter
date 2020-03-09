@@ -25,7 +25,8 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
-{
+{ 
+  [TestFixture]
   public class ExpectedExceptionModelTest
   {
     [Test]

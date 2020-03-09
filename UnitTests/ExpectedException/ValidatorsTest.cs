@@ -22,6 +22,7 @@ using NUnit2To3SyntaxConverter.Unittests.Helpers;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 {
+  [TestFixture]
   public class ValidatorsTest
   {
     private const string c_validatorTestCasesFileName = "resources/ExpectedExceptionValidatorTestCases.cs";

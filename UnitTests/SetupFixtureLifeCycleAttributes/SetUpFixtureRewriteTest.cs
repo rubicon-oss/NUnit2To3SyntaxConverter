@@ -23,6 +23,7 @@ using NUnit2To3SyntaxConverter.Unittests.Helpers;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.SetupFixtureLifeCycleAttributes
 {
+  [TestFixture]
   public class SetUpFixtureRewriteTest
   {
     private const string c_testCasesSourceFileName = "resources/SetUpFixtureTests.cs";
