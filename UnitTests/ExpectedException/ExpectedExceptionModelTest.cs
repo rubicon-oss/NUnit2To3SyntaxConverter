@@ -135,7 +135,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     }
 
     [Test]
-    public void CreateFromAttributeData_ThrowsWhenTypeAndNameIsSpecified ()
+    public void CreateFromAttributeData_TypeAndNameIsSpecified_ThrowsInvalidOperationException ()
     {
       var attributeData = CompiledSourceFileProvider.CompileAttribute (
           "[ExpectedException (typeof(DivideByZeroException), ExpectedExceptionName = \"DivideByZeroException\")]");
