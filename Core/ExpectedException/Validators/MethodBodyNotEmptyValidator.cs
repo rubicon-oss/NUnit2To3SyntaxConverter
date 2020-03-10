@@ -17,12 +17,22 @@ using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
+  /// <summary>
+  /// Validator for the ExpectedException transformation. Checks if the method has a body. If not returns a Validation error.
+  /// </summary>
   public class MethodBodyNotEmptyValidator : IValidator<MethodDeclarationSyntax>
   {
-    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax method)
+    private readonly string _category;
+
+    public MethodBodyNotEmptyValidator (string category)
+    {
+      _category = category;
+    }
+
+    public IEnumerable<ValidationError> Validate (MethodDeclarationSyntax method)
     {
       if (method.Body == null || method.Body.Statements.Count == 0)
-        yield return new ExpectedExceptionValidationError (method, "Unable to convert method with empty body.");
+        yield return ValidationError.CreateFromMethodSyntax (method, _category, "Unable to convert method with empty body.");
     }
   }
 }

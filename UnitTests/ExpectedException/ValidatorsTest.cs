@@ -30,7 +30,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void MethodBodyValidator_ValidatesWithError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new MethodBodyNotEmptyValidator();
+      var validator = new MethodBodyNotEmptyValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax).ToList();
 
@@ -52,7 +52,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void MethodBodyValidator_ValidatesWithoutError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new MethodBodyNotEmptyValidator();
+      var validator = new MethodBodyNotEmptyValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax);
 
@@ -65,7 +65,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void AssertInLastStatementValidator_ValidatesWithError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new AssertInLastStatementValidator();
+      var validator = new AssertInLastStatementValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax).ToList();
 
@@ -86,7 +86,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void AssertInLastStatementValidator_ValidatesWithoutError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new AssertInLastStatementValidator();
+      var validator = new AssertInLastStatementValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax);
 
@@ -100,7 +100,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void LastStatementIsExpressionStatementValidator_ValidatesWithError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new LastStatementIsExpressionStatementValidator();
+      var validator = new LastStatementIsExpressionStatementValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax).ToList();
 
@@ -120,7 +120,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
     public void LastStatementIsExpressionStatementValidator_ValidatesWithoutError (string method)
     {
       var methodSyntax = CompiledSourceFileProvider.LoadMethod (c_validatorTestCasesFileName, method);
-      var validator = new LastStatementIsExpressionStatementValidator();
+      var validator = new LastStatementIsExpressionStatementValidator(c_errorCategory);
 
       var errors = validator.Validate (methodSyntax);
 

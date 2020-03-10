@@ -19,6 +19,12 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionDocumentConverter : IDocumentConverter
   {
+    /// <summary>
+    /// DocumentConverter for the ExpectedException transformation.
+    /// Removes all ExpectedException Attributes from methods and rewrites the last statement in the method body to the equivalent Assert.That(..., Throws...)
+    /// </summary>
+    /// <param name="document">The document the transformations are applied to</param>
+    /// <returns>a new SyntaxNode where all transformation are applied to</returns>
     public async Task<SyntaxNode> Convert (Document document)
     {
       var semanticModel = await document.GetSemanticModelAsync()

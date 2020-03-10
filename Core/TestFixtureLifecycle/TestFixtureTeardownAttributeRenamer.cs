@@ -17,6 +17,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
+  /// <summary>
+  /// Renames the given Attribute to OneTimeTearDown if it is a TestFixtureTearDownAttribute
+  /// </summary>
   public class TestFixtureTearDownAttributeRenamer
   {
     public AttributeSyntax Transform (AttributeSyntax node)

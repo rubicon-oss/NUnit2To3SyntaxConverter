@@ -19,9 +19,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace NUnit2To3SyntaxConverter.Extensions
+namespace NUnit2To3SyntaxConverter.Utilities
 {
-  public static class SyntaxFactoryUtils
+  /// <summary>
+  /// Various custom factory methods to create different SyntaxNodes. Can be tought of as extensions to SyntaxFactory
+  /// </summary>
+  public static class SyntaxFactoryUtilities
   {
     public static InvocationExpressionSyntax SimpleInvocation (ExpressionSyntax expression, IEnumerable<ExpressionSyntax> arguments)
     {

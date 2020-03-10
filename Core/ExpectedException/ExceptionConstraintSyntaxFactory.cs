@@ -16,12 +16,18 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
+using static NUnit2To3SyntaxConverter.Utilities.SyntaxFactoryUtilities;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public static class ExceptionConstraintSyntaxFactory
   {
+    /// <summary>
+    /// Creates the Throws in <c>Assert(..., Throws.Exception)</c> for a given exception name. It uses either <c>InstanceOf&lt;Exception&gt;</c>
+    /// if the Exception type is not one of the Expections Nunit predefines. 
+    /// </summary>
+    /// <param name="exceptionName">Unqualified Exception name</param>
+    /// <returns>ExpressionSyntax like <c>Throws.InvalidOperationException</c> or <c>Throws.InstanceOf&lt;MyCustomException&gt;</c></returns>
     public static ExpressionSyntax CreateThrowsExceptionConstrainSyntax (string exceptionName)
     {
       var exceptionNameWithoutSystemNs = Regex.Replace (exceptionName, "^(System.)", "");

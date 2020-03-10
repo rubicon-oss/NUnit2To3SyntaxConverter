@@ -19,15 +19,20 @@ using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
+  /// <summary>
+  /// Validator for the ExpectedException transformation. This validator is a compound object of all validations for this transformation.
+  /// </summary>
   public class ExpectedExceptionValidator : IValidator<MethodDeclarationSyntax>
   {
+    private const string c_errorCategory = "ExpectedException";
+
     private readonly IEnumerable<IValidator<MethodDeclarationSyntax>> _innerValidators
         = ImmutableList.Create<IValidator<MethodDeclarationSyntax>> (
-            new MethodBodyNotEmptyValidator(),
-            new AssertInLastStatementValidator(),
-            new LastStatementIsExpressionStatementValidator());
+            new MethodBodyNotEmptyValidator(c_errorCategory),
+            new AssertInLastStatementValidator(c_errorCategory),
+            new LastStatementIsExpressionStatementValidator(c_errorCategory));
 
-    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax input)
+    public IEnumerable<ValidationError> Validate (MethodDeclarationSyntax input)
     {
       return _innerValidators.SelectMany (validator => validator.Validate (input));
     }

@@ -17,6 +17,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using NUnit.Framework;
 
 namespace NUnit2To3SyntaxConverter.Unittests.Helpers
@@ -77,6 +78,28 @@ namespace NUnit2To3SyntaxConverter.Unittests.Helpers
 
       var model = compilation.GetSemanticModel (tree);
       return (model, root);
+    }
+
+    public static Document LoadFileAsDocumentInTestProject (string path)
+    {
+      var workspace = new AdhocWorkspace();
+      const string projectName = "TestProject";
+      var projectId = ProjectId.CreateNewId();
+      var versionStamp = VersionStamp.Create();
+
+      var testProject = ProjectInfo.Create (projectId, versionStamp, projectName, projectName, LanguageNames.CSharp)
+          .WithMetadataReferences (
+              new[]
+              {
+                  MetadataReference.CreateFromFile (
+                      typeof (object).Assembly.Location),
+                  MetadataReference.CreateFromFile (TestContext.CurrentContext.TestDirectory + @"\resources\nunit.framework.v2.6.2.dll")
+              });
+      using var file = File.Open (TestContext.CurrentContext.TestDirectory + path, FileMode.Open, FileAccess.Read);
+      var sourceText = SourceText.From (file);
+      workspace.AddProject (testProject);
+
+      return workspace.AddDocument (testProject.Id, "Program.cs", sourceText);
     }
   }
 }

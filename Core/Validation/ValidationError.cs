@@ -12,14 +12,36 @@
 //
 
 using System;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.Validation
 {
-  public interface IValidationError
+  /// <summary>
+  /// Represents an error case during migration
+  /// </summary>
+  public class ValidationError
   {
-    string FileName { get; }
-    string MethodName { get; }
-    string Category { get; }
-    string Reason { get; }
+    public static ValidationError CreateFromMethodSyntax (MethodDeclarationSyntax method, string category, string reason)
+    {
+      return new ValidationError(method.GetLocation().GetLineSpan().Path, method.Identifier.ToString(), category, reason);
+    }
+
+    public string FileName { get; }
+    public string MethodName { get; }
+    public string Category { get; }
+    public string Reason { get; }
+
+    public ValidationError (string fileName, string methodName, string category, string reason)
+    {
+      FileName = fileName;
+      MethodName = methodName;
+      Category = category;
+      Reason = reason;
+    }
+
+    public ValidationError WithCategory (string category)
+    {
+      return new ValidationError(FileName, MethodName, category, Reason);
+    }
   }
 }

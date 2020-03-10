@@ -16,6 +16,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
+  /// <summary>
+  /// Transforms a given MemberAccessExpression to use the new Nunit3 <see href="https://github.com/nunit/docs/wiki/Breaking-Changes#assertions-and-constraints">assertion names</see>
+  /// </summary>
   public class AssertRenamer
   {
     public MemberAccessExpressionSyntax Transform (MemberAccessExpressionSyntax node, (ExpressionSyntax, SimpleNameSyntax) context)

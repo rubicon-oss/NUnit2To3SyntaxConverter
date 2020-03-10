@@ -18,6 +18,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
+  /// <summary>
+  /// Roslyn SyntaxRewriter which replaces all TestFixtureSetUp and -TearDown attributes with the new OneTimeSetUp and OneTimeTearDown attributes
+  /// </summary>
   public class TestFixtureLifecycleAttributeRewriter : CSharpSyntaxRewriter
   {
     private readonly TestFixtureSetupAttributeRenamer _setupRewriter;

@@ -16,6 +16,12 @@ using Microsoft.CodeAnalysis;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
+  /// <summary>
+  /// DocumentConverter for the RenameAsserts transformation.
+  /// Renames all occurences of old assert syntax to the new one.
+  /// </summary>
+  /// <param name="document">The document the transformations are applied to</param>
+  /// <returns>a new SyntaxNode where all transformation are applied to</returns>
   public class AssertRenamingDocumentConverter : IDocumentConverter
   {
     private readonly AssertRewriter _assertRewriter;

@@ -20,6 +20,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
+  /// <summary>
+  /// Roslyn SyntaxRewriter which rewrites all occurences of SetUp and TearDown attributes inside a SetUpFixture
+  /// </summary>
   public class SetUpFixtureLifeCycleRewriter : CSharpSyntaxRewriter
   {
     private readonly SemanticModel _documentSemanticModel;

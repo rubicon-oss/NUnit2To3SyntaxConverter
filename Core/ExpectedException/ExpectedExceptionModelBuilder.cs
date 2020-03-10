@@ -15,7 +15,7 @@ using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
+using static NUnit2To3SyntaxConverter.Utilities.SyntaxFactoryUtilities;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
@@ -73,9 +73,11 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         MatchType = MemberAccess (IdentifierName ("MessageMatch"), "Exact");
 
       if (ExceptionName != null && ExceptionType != null)
+      {
         throw new InvalidOperationException (
             "Unable to convert ExpectedException attribute, "
             + $"both a name: {ExceptionName.ToString()} and a type: {ExceptionType.ToString()} are specified");
+      }
 
       if (ExceptionName is LiteralExpressionSyntax nameLiteral && ExceptionType == null)
       {

@@ -17,12 +17,18 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
+using static NUnit2To3SyntaxConverter.Utilities.SyntaxFactoryUtilities;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionMethodBodyTransformer
   {
+    /// <summary>
+    /// Transfroms a method body using information form IExpectedException model to the new NUnit3 Assert.That(..., Throws...) syntax
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
       var indentation = Whitespace (new string (' ', 2));
@@ -30,13 +36,12 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
       var bodyIndentation = baseIndentation.Add (indentation);
       var assertThatArgsIndentation = bodyIndentation.Add (indentation).Add (indentation);
 
-      var bodyStatement = node.Body.Statements.Last();
+      var bodyStatement = node.Body!.Statements.Last();
 
       var lambdaExpression = CreateLambdaExpression (bodyStatement);
 
       var assertThat = MemberAccess (IdentifierName ("Assert"), "That")
           .WithLeadingTrivia (bodyIndentation);
-
 
       var assertThrowsArgumentList = SeparatedList<ArgumentSyntax> (
           NodeOrTokenList (
@@ -53,9 +58,9 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
               Token (SyntaxKind.CloseParenToken)));
 
       return node.WithBody (
-          node.Body.WithStatements (
-              node.Body.Statements.Replace (
-                  node.Body.Statements.Last(),
+          node.Body!.WithStatements (
+              node.Body!.Statements.Replace (
+                  node.Body!.Statements.Last(),
                   ExpressionStatement (assertThatThrows).WithTrailingTrivia (Whitespace (Formatting.NewLine)))));
     }
 

@@ -13,27 +13,29 @@
 
 using System;
 using NUnit.Framework;
-using NUnit2To3SyntaxConverter.ExpectedException;
 
 namespace UnitTests
 {
   public class ExpectedExceptionIntegrationTests
   {
-    
+
+    [Test]
     public void SimpleBaseCase ()
     {
       Assert.That (
           () => Console.WriteLine(),
           Throws.Exception);
     }
-    
+
+    [Test]
     public void WithCustomExceptionType ()
     {
       Assert.That (
           () => Console.WriteLine(),
           Throws.InstanceOf<DivideByZeroException>());
     }
-    
+
+    [Test]
     public void WithWellKnownExceptionType ()
     {
       Assert.That (
@@ -41,6 +43,7 @@ namespace UnitTests
           Throws.ArgumentException);
     }
 
+    [Test]
     public void WithCustomExpectedMessage ()
     {
       Assert.That (
@@ -49,6 +52,7 @@ namespace UnitTests
               .With.Message.EqualTo ("test message"));
     }
 
+    [Test]
     public void WithCustomExpectedMessageAndMatchTypeRegex ()
     {
       Assert.That (
@@ -57,6 +61,7 @@ namespace UnitTests
               .With.Message.Matches ("test message regex"));
     }
 
+    [Test]
     public void WithAllCustomFieldsAndLongMessage ()
     {
       Assert.That (
@@ -65,7 +70,8 @@ namespace UnitTests
               .With.Message.Contains (
                   "test message reallllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllly long"));
     }
-    
+
+    [Test]
     public void WithMultiLineString ()
     {
       Assert.That (
@@ -76,7 +82,8 @@ namespace UnitTests
                   + "line"
                   + "string"));
     }
-    
+
+    [Test]
     [ExpectedException (ExpectedMessage = "test message regex", MatchType = MessageMatch.Regex)]
     public void WontConvertWithNonExpressionStatementInLastPosition ()
     {
@@ -89,7 +96,8 @@ namespace UnitTests
         throw Exception ("test message regex");
       }
     }
-    
+
+    [Test]
     [ExpectedException]
     public void WontConvertAssertionStatement ()
     {
@@ -102,7 +110,8 @@ namespace UnitTests
       }
       Assert.That(1, Is.EqualTo(1));
     }
-    
+
+    [Test]
     [ExpectedException]
     public void WontConvertEmptyMethod ()
     {

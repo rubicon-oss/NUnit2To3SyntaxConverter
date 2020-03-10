@@ -17,9 +17,20 @@ using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
+  /// <summary>
+  /// Validator for the ExpectedException transformation. This Validator checks if the last statement is an ExpressionStatement. If not (eg if-statement, while-loop)
+  /// the validator returns a ValidationError.
+  /// </summary>
   public class LastStatementIsExpressionStatementValidator : IValidator<MethodDeclarationSyntax>
   {
-    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax input)
+    private readonly string _category;
+
+    public LastStatementIsExpressionStatementValidator (string category)
+    {
+      _category = category;
+    }
+
+    public IEnumerable<ValidationError> Validate (MethodDeclarationSyntax input)
     {
       var lastStatement = input.Body?.Statements.LastOrDefault();
       if (lastStatement == null
@@ -27,7 +38,7 @@ namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
           || lastStatement is ThrowStatementSyntax)
         yield break;
 
-      yield return new ExpectedExceptionValidationError (input, "Unable to convert method with non expression statement in last position.");
+      yield return ValidationError.CreateFromMethodSyntax (input, _category, "Unable to convert method with non expression statement in last position.");
     }
   }
 }

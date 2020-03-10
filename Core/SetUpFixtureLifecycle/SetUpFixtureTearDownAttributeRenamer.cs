@@ -18,6 +18,9 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
+  /// <summary>
+  /// Renames the given attribute to OneTimeTearDown if it is a TearDown attribute
+  /// </summary>
   public class SetUpFixtureTearDownAttributeRenamer
   {
     public AttributeSyntax Transform (AttributeSyntax node)

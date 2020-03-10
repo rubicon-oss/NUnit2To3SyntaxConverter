@@ -18,6 +18,9 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
+  /// <summary>
+  /// Renames the given attribute to OneTimeSetUp if it is a SetUp attribute
+  /// </summary>
   public class SetUpFixtureSetUpAttributeRenamer
   {
     public AttributeSyntax Transform (AttributeSyntax node)

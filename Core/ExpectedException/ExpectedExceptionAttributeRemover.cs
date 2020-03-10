@@ -21,6 +21,12 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionAttributeRemover
   {
+    /// <summary>
+    /// Transforms the given MethodDelcarationSyntax by removing all occurences of ExpectedException attributes
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="model"></param>
+    /// <returns>a new MethodDeclaration based on <param name="node"></param> but without ExpectedException attributes</returns>
     public MethodDeclarationSyntax Transform (MethodDeclarationSyntax node, IExpectedExceptionModel model)
     {
       var toRemove = model.GetAttributeSyntax().GetAwaiter().GetResult()

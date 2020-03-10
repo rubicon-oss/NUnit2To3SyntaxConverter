@@ -18,10 +18,14 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Extensions;
+using NUnit2To3SyntaxConverter.Utilities;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
+  /// <summary>
+  /// Configuration for the specific Asserts that should be reanamed. See <see href="https://github.com/nunit/docs/wiki/Breaking-Changes#assertions-and-constraints">here</see>.
+  /// </summary>
   public class RenamedAssertsMap
   {
     private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> s_newNameMap
@@ -94,7 +98,7 @@ namespace NUnit2To3SyntaxConverter.RenamedAsserts
 
       var last = nameParts.Last();
 
-      return (SyntaxFactoryUtils.MemberAccess (IdentifierName (first), middle), access.WithIdentifier (Identifier (last)));
+      return (SyntaxFactoryUtilities.MemberAccess (IdentifierName (first), middle), access.WithIdentifier (Identifier (last)));
     }
   }
 }

@@ -18,6 +18,12 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
+  /// <summary>
+  /// DocumentConverter for the TestFixture lifecycle attribute transformation.
+  /// Renames all TestFixtureSetUp and TestFixtureTearDown attributes inside of TestFixtures 
+  /// </summary>
+  /// <param name="document">The document the transformations are applied to</param>
+  /// <returns>a new SyntaxNode where all transformation are applied to</returns>
   public class TestFixtureDocumentConverter : IDocumentConverter
   {
     private readonly CSharpSyntaxRewriter _attributeRewriter;

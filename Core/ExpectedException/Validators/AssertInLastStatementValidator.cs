@@ -18,12 +18,23 @@ using NUnit2To3SyntaxConverter.Validation;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException.Validators
 {
+  /// <summary>
+  /// Validator for the ExpectedException transformation. This validator checks whether there is an Nunit Assertion in the last stamtement. If ther is,
+  /// this validator returns a <see cref="ValidationError"/>.
+  /// </summary>
   public class AssertInLastStatementValidator : IValidator<MethodDeclarationSyntax>
   {
-    public IEnumerable<IValidationError> Validate (MethodDeclarationSyntax input)
+    private readonly string _category;
+
+    public AssertInLastStatementValidator (string category)
+    {
+      _category = category;
+    }
+
+    public IEnumerable<ValidationError> Validate (MethodDeclarationSyntax input)
     {
       if (input?.Body?.Statements.LastOrDefault()?.WithoutTrivia()?.ToString().StartsWith ("Assert.") == true)
-        yield return new ExpectedExceptionValidationError (input, "Unable to convert method with Assertion in last statement.");
+        yield return ValidationError.CreateFromMethodSyntax (input, _category, "Unable to convert method with Assertion in last statement.");
     }
   }
 }

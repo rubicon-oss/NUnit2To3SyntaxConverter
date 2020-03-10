@@ -17,6 +17,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
+  /// <summary>
+  /// Renames the given Attribute to OneTimeSetUp if it is a TestFixtureSetUpAttribute
+  /// </summary>
   public class TestFixtureSetupAttributeRenamer
   {
     public AttributeSyntax Transform (AttributeSyntax node)

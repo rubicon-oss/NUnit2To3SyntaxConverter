@@ -13,6 +13,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
@@ -45,6 +46,19 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var rewrittenMethodSyntax = rewriter.VisitMethodDeclaration (syntax);
 
       Assert.That (rewrittenMethodSyntax.ToFullString().Trim(), Is.EqualTo (expectedSyntax.ToFullString().Trim()));
+    }
+
+    [Test]
+    public async Task ExpectedExceptionDocumentConverter_AppliesAllRewritings ()
+    {
+      var document = CompiledSourceFileProvider.LoadFileAsDocumentInTestProject (c_testCasesSourceFileName);
+      var expected = await CompiledSourceFileProvider.LoadFileAsDocumentInTestProject (c_expectedTestResultsSourceFileName)
+          .GetSyntaxRootAsync();
+      var converter = new ExpectedExceptionDocumentConverter();
+
+      var actual = await converter.Convert (document);
+
+      Assert.That (actual.ToFullString(), Is.EqualTo (expected?.ToFullString()));
     }
 
     private (ExpectedExceptionRewriter, MethodDeclarationSyntax) CreateRewriterFor (string file, string methodName)

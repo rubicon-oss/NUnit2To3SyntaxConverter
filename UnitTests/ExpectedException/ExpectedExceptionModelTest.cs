@@ -18,7 +18,7 @@ using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
 using NUnit2To3SyntaxConverter.Unittests.Helpers;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
+using static NUnit2To3SyntaxConverter.Utilities.SyntaxFactoryUtilities;
 
 namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
 { 

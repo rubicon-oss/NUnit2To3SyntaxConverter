@@ -18,10 +18,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NUnit2To3SyntaxConverter.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static NUnit2To3SyntaxConverter.Extensions.SyntaxFactoryUtils;
+using static NUnit2To3SyntaxConverter.Utilities.SyntaxFactoryUtilities;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
+  /// <summary>
+  /// Representation of the old ExpectedException attribute. Can be created from a compiled ExpectionException.
+  /// </summary>
   public class ExpectedExceptionModel : IExpectedExceptionModel
   {
     public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
@@ -112,7 +115,8 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     private ExpressionSyntax CreateWithMessage (ExpressionSyntax expression, string baseIndent)
     {
-      if (ExpectedMessage == null) return expression;
+      if (ExpectedMessage == null)
+        return expression;
 
       var indent = new string (Formatting.IndentationCharacter, Formatting.IndentationSize);
       var withMessage = MemberAccess (
@@ -134,9 +138,13 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
       if (EndsOnSameLine (ExpectedMessage)
           && !IsMessageTooLong (ExpectedMessage))
+      {
         return CreateSingleLineMessage (withMessageMatchType, ExpectedMessage, baseIndent + indent + indent + indent + indent);
+      }
       else
+      {
         return CreateMultiLineMessage (withMessageMatchType, ExpectedMessage, baseIndent + indent + indent + indent + indent);
+      }
     }
 
     private ExpressionSyntax CreateSingleLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent)

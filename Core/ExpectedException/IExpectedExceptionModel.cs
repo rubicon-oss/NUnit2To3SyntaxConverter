@@ -17,6 +17,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.ExpectedException
 {
+  /// <summary>
+  /// Representation of an ExpectedExceptionAttribute. Can be converted to the equivalent Throws... constraint
+  /// </summary>
   public interface IExpectedExceptionModel
   {
     Task<AttributeSyntax> GetAttributeSyntax ();

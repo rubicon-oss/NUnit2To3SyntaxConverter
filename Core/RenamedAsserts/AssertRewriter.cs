@@ -18,6 +18,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.RenamedAsserts
 {
+  /// <summary>
+  /// Roslyn rewriter that applies all transformations for the Assert renaming to a given SyntaxNode
+  /// </summary>
   public class AssertRewriter : CSharpSyntaxRewriter
   {
     private readonly RenamedAssertsMap _renamedAssertsMap;

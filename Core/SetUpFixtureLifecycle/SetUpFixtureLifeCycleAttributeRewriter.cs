@@ -18,6 +18,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
+  /// <summary>
+  /// Roslyn SyntaxRewriter which renames a given SetUp or TearDown attribute 
+  /// </summary>
   public class SetUpFixtureLifeCycleAttributeRewriter : CSharpSyntaxRewriter
   {
     private readonly SetUpFixtureSetUpAttributeRenamer _setUpRenamer;

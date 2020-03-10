@@ -16,8 +16,12 @@ using System.Collections.Generic;
 
 namespace NUnit2To3SyntaxConverter.Validation
 {
+  /// <summary>
+  /// Checks a given precondition and returns one or more errors if the condition is not satisfied
+  /// </summary>
+  /// <typeparam name="TInput"></typeparam>
   public interface IValidator<in TInput>
   {
-    IEnumerable<IValidationError> Validate (TInput input);
+    IEnumerable<ValidationError> Validate (TInput input);
   }
 }

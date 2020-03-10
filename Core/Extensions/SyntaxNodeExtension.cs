@@ -20,20 +20,6 @@ namespace NUnit2To3SyntaxConverter.Extensions
 {
   public static class SyntaxNodeExtension
   {
-    public static T WithExtraIndentation<T> (this T _this, string newLine = Formatting.NewLine, string indent = "  ")
-        where T : SyntaxNode
-    {
-      var node = (T) new ExtraIndentationNodeVisitor (newLine, indent).Visit (_this);
-      return node.WithLeadingTrivia (node.GetLeadingTrivia().Add (Whitespace (indent)));
-    }
-
-    public static T WithIndentation<T> (this T _this, string newLine = Formatting.NewLine, string indent = "  ")
-        where T : SyntaxNode
-    {
-      var node = (T) new IndentationNodeVisitor (indent).Visit (_this);
-      return node.WithLeadingTrivia (node.GetLeadingTrivia().Add (Whitespace (indent)));
-    }
-
     private class ExtraIndentationNodeVisitor : CSharpSyntaxRewriter
     {
       private readonly string _extraIndentation;
@@ -77,6 +63,20 @@ namespace NUnit2To3SyntaxConverter.Extensions
 
         return trivia;
       }
+    }
+
+    public static T WithExtraIndentation<T> (this T _this, string newLine = Formatting.NewLine, string indent = "  ")
+        where T : SyntaxNode
+    {
+      var node = (T) new ExtraIndentationNodeVisitor (newLine, indent).Visit (_this);
+      return node.WithLeadingTrivia (node.GetLeadingTrivia().Add (Whitespace (indent)));
+    }
+
+    public static T WithIndentation<T> (this T _this, string newLine = Formatting.NewLine, string indent = "  ")
+        where T : SyntaxNode
+    {
+      var node = (T) new IndentationNodeVisitor (indent).Visit (_this);
+      return node.WithLeadingTrivia (node.GetLeadingTrivia().Add (Whitespace (indent)));
     }
   }
 }

@@ -17,6 +17,12 @@ using Microsoft.CodeAnalysis;
 
 namespace NUnit2To3SyntaxConverter.SetUpFixtureLifecycle
 {
+  /// <summary>
+  /// DocumentConverter for the SetUpFixture lifecycle attribute transformation.
+  /// Renames all SetUp and TearDown attributes inside of SetUpFixtures 
+  /// </summary>
+  /// <param name="document">The document the transformations are applied to</param>
+  /// <returns>a new SyntaxNode where all transformation are applied to</returns>
   public class SetUpFixtureDocumentConverter : IDocumentConverter
   {
     public async Task<SyntaxNode> Convert (Document document)
