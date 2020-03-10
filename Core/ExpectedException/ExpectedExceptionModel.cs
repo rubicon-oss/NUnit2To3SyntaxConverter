@@ -24,6 +24,52 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 {
   public class ExpectedExceptionModel : IExpectedExceptionModel
   {
+    public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
+    {
+      var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax
+                            ?? throw new ArgumentException ($"{nameof(attribute)} does not support a syntax tree.");
+
+      var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
+
+      return attributeArguments == null
+          ? CreateNoArgExpectedExceptionModel (attribute)
+          : CreateWithArgsExpectedExceptionModel (attribute, attributeArguments.Value);
+    }
+
+    private static ExpectedExceptionModel CreateNoArgExpectedExceptionModel (AttributeData attribute)
+    {
+      var builder = new ExpectedExceptionModelBuilder();
+      return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
+          .Build (attribute);
+    }
+
+    private static ExpectedExceptionModel CreateWithArgsExpectedExceptionModel (
+        AttributeData attribute,
+        SeparatedSyntaxList<AttributeArgumentSyntax> attributeArguments)
+    {
+      var builder = new ExpectedExceptionModelBuilder();
+      foreach (var attributeArgument in attributeArguments)
+      {
+        var value = attributeArgument.Expression;
+
+        var namedArgumentName = attributeArgument.NameColon?.Name
+                                ?? attributeArgument.NameEquals?.Name;
+
+        builder = namedArgumentName?.ToString() switch
+        {
+            "UserMessage" => builder.WithUserMessage (value),
+            "ExpectedException" => builder.WithExceptionType (value),
+            "ExpectedMessage" => builder.WithExpectedMessage (value),
+            "MatchType" => builder.WithMatchType (value),
+            "ExpectedExceptionName" => builder.WithExceptionName (value),
+            null => builder.WithExceptionTypeOrName (value),
+            _ => builder
+        };
+      }
+
+      return builder.Build (attribute);
+    }
+
     private readonly AttributeData _attributeData;
     public ExpressionSyntax ExceptionType { get; }
     public ExpressionSyntax? UserMessage { get; }
@@ -64,52 +110,6 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
           : CreateWithMessage (throwsWithInstanceOfExpressionType, baseIndent);
     }
 
-    public static ExpectedExceptionModel CreateFromAttributeData (AttributeData attribute)
-    {
-      var attributeSyntax = attribute.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax
-                            ?? throw new ArgumentException ($"{nameof(attribute)} does not support a syntax tree.");
-
-      var attributeArguments = attributeSyntax.ArgumentList?.Arguments;
-
-      return attributeArguments == null
-          ? CreateNoArgExpectedExceptionModel (attribute)
-          : CreateWithArgsExpectedExceptionModel (attribute, attributeArguments.Value);
-    }
-
-    private static ExpectedExceptionModel CreateWithArgsExpectedExceptionModel (
-        AttributeData attribute,
-        SeparatedSyntaxList<AttributeArgumentSyntax> attributeArguments)
-    {
-      var builder = new ExpectedExceptionModelBuilder();
-      foreach (var attributeArgument in attributeArguments)
-      {
-        var value = attributeArgument.Expression;
-
-        var namedArgumentName = attributeArgument.NameColon?.Name
-                                ?? attributeArgument.NameEquals?.Name;
-
-        builder = namedArgumentName?.ToString() switch
-        {
-            "UserMessage" => builder.WithUserMessage (value),
-            "ExpectedException" => builder.WithExceptionType (value),
-            "ExpectedMessage" => builder.WithExpectedMessage (value),
-            "MatchType" => builder.WithMatchType (value),
-            "ExpectedExceptionName" => builder.WithExceptionName (value),
-            null => builder.WithExceptionTypeOrName (value),
-            _ => builder
-        };
-      }
-
-      return builder.Build (attribute);
-    }
-
-    private static ExpectedExceptionModel CreateNoArgExpectedExceptionModel (AttributeData attribute)
-    {
-      var builder = new ExpectedExceptionModelBuilder();
-      return builder.WithExceptionType (TypeOfExpression (IdentifierName (nameof(Exception))))
-          .Build (attribute);
-    }
-
     private ExpressionSyntax CreateWithMessage (ExpressionSyntax expression, string baseIndent)
     {
       if (ExpectedMessage == null) return expression;
@@ -139,26 +139,29 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
         return CreateMultiLineMessage (withMessageMatchType, ExpectedMessage, baseIndent + indent + indent + indent + indent);
     }
 
-    private ExpressionSyntax CreateSingleLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent) =>
-        SimpleInvocation (
-            invocationOn,
-            new[]
-            {
-                message.WithLeadingTrivia (Whitespace (""))!.WithIndentation (indent: indent)
-            });
+    private ExpressionSyntax CreateSingleLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent)
+    {
+      return SimpleInvocation (
+          invocationOn,
+          new[]
+          {
+              message.WithLeadingTrivia (Whitespace (""))!.WithIndentation (indent: indent)
+          });
+    }
 
-    private ExpressionSyntax CreateMultiLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent) =>
-        InvocationExpression (
-            invocationOn,
-            ArgumentList (
-                Token (SyntaxKind.OpenParenToken).WithLeadingTrivia (Whitespace (" ")),
-                SeparatedList (
-                    new[]
-                    {
-                        Argument (message.WithIndentation (indent: indent).WithLeadingTrivia (Whitespace (Formatting.NewLine + indent)))
-                    }),
-                Token (SyntaxKind.CloseParenToken)));
-
+    private ExpressionSyntax CreateMultiLineMessage (ExpressionSyntax invocationOn, ExpressionSyntax message, string indent)
+    {
+      return InvocationExpression (
+          invocationOn,
+          ArgumentList (
+              Token (SyntaxKind.OpenParenToken).WithLeadingTrivia (Whitespace (" ")),
+              SeparatedList (
+                  new[]
+                  {
+                      Argument (message.WithIndentation (indent: indent).WithLeadingTrivia (Whitespace (Formatting.NewLine + indent)))
+                  }),
+              Token (SyntaxKind.CloseParenToken)));
+    }
 
     private static bool EndsOnSameLine (SyntaxNode node)
     {
