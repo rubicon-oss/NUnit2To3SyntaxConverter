@@ -19,6 +19,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Moq;
 using NUnit.Framework;
 using NUnit2To3SyntaxConverter.ExpectedException;
@@ -39,6 +41,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
       var attributeRemover = new ExpectedExceptionAttributeRemover();
       var (_, methodSyntax) = CompiledSourceFileProvider.CompileAttributeLists (attributeLists);
 
+      var expected = SyntaxFactory.AttributeList (
+          SyntaxFactory.SeparatedList (new[] { SyntaxFactory.Attribute (SyntaxFactory.IdentifierName ("Test")) }));
+
       var model = new Mock<IExpectedExceptionModel>();
       model.Setup (m => m.GetAttributeSyntax())
           .Returns (
@@ -47,8 +52,9 @@ namespace NUnit2To3SyntaxConverter.UnitTests.ExpectedException
                       .SelectMany (list => list.Attributes).First (attr => attr.Name.ToString() == "ExpectedException")));
 
       var rewritten = attributeRemover.Transform (methodSyntax, model.Object);
-
-      Assert.That (rewritten.AttributeLists.ToString(), Is.EqualTo ("[Test]"));
+      
+      Assert.That( rewritten.AttributeLists, Has.One.Items);
+      Assert.That (rewritten.AttributeLists[0], Is.EquivalentTo (expected));
     }
   }
 }
