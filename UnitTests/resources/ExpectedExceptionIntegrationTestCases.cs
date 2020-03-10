@@ -30,13 +30,13 @@ namespace UnitTests
       Console.WriteLine();
     }
 
-    [ExpectedException (typeof (DivideByZeroException)]
+    [ExpectedException (typeof (DivideByZeroException))]
     public void WithCustomExceptionType ()
     {
       Console.WriteLine();
     }
     
-    [ExpectedException (typeof (ArgumentException)]
+    [ExpectedException (typeof (ArgumentException))]
     public void WithWellKnownExceptionType ()
     {
       Console.WriteLine();
