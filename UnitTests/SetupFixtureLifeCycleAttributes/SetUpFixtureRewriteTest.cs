@@ -30,8 +30,8 @@ namespace NUnit2To3SyntaxConverter.UnitTests.SetupFixtureLifeCycleAttributes
     
     [Test]
     [TestCase ("SetUpFixtureWithSetupOnly")]
-    [TestCase ("SetUpFixtureWithSetupAndTeardown")]
-    [TestCase ("SetUpFixtureWithTeardownOnly")]
+    [TestCase ("SetUpFixtureWithSetupAndTearDown")]
+    [TestCase ("SetUpFixtureWithTearDownOnly")]
     [TestCase ("SetUpFixtureWithOtherMethods")]
     [TestCase ("SetUpFixtureByInheritance")]
     public void TestSetUpFixtureRewrite_RewriteAttributeToNewNames (string className)

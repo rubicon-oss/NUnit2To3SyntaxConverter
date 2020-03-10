@@ -30,7 +30,7 @@ namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
     {
       _attributeRewriter = new TestFixtureLifecycleAttributeRewriter (
           new TestFixtureSetupAttributeRenamer(),
-          new TestFixtureTeardownAttributeRenamer());
+          new TestFixtureTearDownAttributeRenamer());
     }
 
     public async Task<SyntaxNode> Convert (Document document)

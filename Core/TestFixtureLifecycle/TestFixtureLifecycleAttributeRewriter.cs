@@ -25,11 +25,11 @@ namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
   public class TestFixtureLifecycleAttributeRewriter : CSharpSyntaxRewriter
   {
     private readonly TestFixtureSetupAttributeRenamer _setupRewriter;
-    private readonly TestFixtureTeardownAttributeRenamer _teardownRewriter;
+    private readonly TestFixtureTearDownAttributeRenamer _teardownRewriter;
 
     public TestFixtureLifecycleAttributeRewriter (
         TestFixtureSetupAttributeRenamer setupRewriter,
-        TestFixtureTeardownAttributeRenamer teardownAttributeRewriter)
+        TestFixtureTearDownAttributeRenamer teardownAttributeRewriter)
     {
       _setupRewriter = setupRewriter;
       _teardownRewriter = teardownAttributeRewriter;

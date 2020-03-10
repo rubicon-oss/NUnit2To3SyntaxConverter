@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace UnitTests
 {
   [SetUpFixture]
-  public class SetUpFixtureWithSetupAndTeardown
+  public class SetUpFixtureWithSetupAndTearDown
   {
     [SetUp]
     public void Setup ()
@@ -17,7 +17,7 @@ namespace UnitTests
   }
 
   [SetUpFixture]
-  public class SetUpFixtureWithSetupAndTeardownTransformed
+  public class SetUpFixtureWithSetupAndTearDownTransformed
   {
     [OneTimeSetUp]
     public void Setup ()
@@ -49,7 +49,7 @@ namespace UnitTests
   }
 
   [SetUpFixture]
-  public class SetUpFixtureWithTeardownOnly
+  public class SetUpFixtureWithTearDownOnly
   {
     [TearDown]
     public void TearDown ()
@@ -58,7 +58,7 @@ namespace UnitTests
   }
 
   [SetUpFixture]
-  public class SetUpFixtureWithTeardownOnlyTransformed
+  public class SetUpFixtureWithTearDownOnlyTransformed
   {
     [OneTimeTearDown]
     public void TearDown ()

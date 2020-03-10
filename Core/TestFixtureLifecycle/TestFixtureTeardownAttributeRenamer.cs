@@ -21,7 +21,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NUnit2To3SyntaxConverter.TestFixtureLifecycle
 {
-  public class TestFixtureTeardownAttributeRenamer
+  public class TestFixtureTearDownAttributeRenamer
   {
     public AttributeSyntax Transform (AttributeSyntax node)
     {

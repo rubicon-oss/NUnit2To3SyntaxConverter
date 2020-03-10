@@ -39,7 +39,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
       var attributeList = ParseAttributeList (attribute);
       var rewriter = new TestFixtureLifecycleAttributeRewriter (
           new TestFixtureSetupAttributeRenamer(),
-          new TestFixtureTeardownAttributeRenamer());
+          new TestFixtureTearDownAttributeRenamer());
 
       var result = rewriter.Visit (attributeList);
 
@@ -59,7 +59,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
       var attributeList = ParseAttributeList (attribute);
       var rewriter = new TestFixtureLifecycleAttributeRewriter (
           new TestFixtureSetupAttributeRenamer(),
-          new TestFixtureTeardownAttributeRenamer());
+          new TestFixtureTearDownAttributeRenamer());
 
       var result = rewriter.Visit (attributeList);
 
@@ -76,7 +76,7 @@ namespace NUnit2To3SyntaxConverter.UnitTests.TestFixtureLifecycleAttributes
       var attributeList = ParseMemberDeclaration (attribute);
       var rewriter = new TestFixtureLifecycleAttributeRewriter (
           new TestFixtureSetupAttributeRenamer(),
-          new TestFixtureTeardownAttributeRenamer());
+          new TestFixtureTearDownAttributeRenamer());
 
       var result = rewriter.Visit (attributeList);
 
