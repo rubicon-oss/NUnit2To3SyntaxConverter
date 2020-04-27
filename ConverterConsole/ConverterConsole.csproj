@@ -6,6 +6,10 @@
         <LangVersion>8</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <Nullable>enable</Nullable>
+        <Company>rubicon IT GmbH</Company>
+        <Copyright>Copyright (c) rubicon IT GmbH, www.rubicon.eu</Copyright>
+        <TargetName>NUnit2to3SyntaxConverter</TargetName>
+        <AssemblyName>NUnit2to3SyntaxConverter</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.7.82" />

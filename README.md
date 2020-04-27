@@ -36,7 +36,7 @@ Copyright (C) 2020 NUnit2To3SyntaxConverter
                               file
 ```
 Sample invocation:  
-`NUnit2To3SyntaxConverter.exe --msbuildversion=16.4.29728.190 --features=ExpectedException,AssertRenaming C:\path\to\My\AwesomeSolution.sln`
+`NUnit2To3SyntaxConverter.exe C:\path\to\My\AwesomeSolution.sln --msbuildversion=16.4.29728.190 --features=ExpectedException,AssertRenaming`
 
 ### Recommended Migration Process
 

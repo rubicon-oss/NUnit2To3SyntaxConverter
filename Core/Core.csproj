@@ -6,6 +6,7 @@
         <LangVersion>8</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <Nullable>enable</Nullable>
+        <Copyright>Copyright (c) rubicon IT GmbH, www.rubicon.eu</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
