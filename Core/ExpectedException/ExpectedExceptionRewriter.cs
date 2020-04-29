@@ -1,4 +1,4 @@
-﻿#region copyright
+#region copyright
 
 // 
 // Copyright (c) rubicon IT GmbH
@@ -47,34 +47,33 @@ namespace NUnit2To3SyntaxConverter.ExpectedException
 
     public override SyntaxNode VisitMethodDeclaration (MethodDeclarationSyntax node)
     {
+      var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node);
+
+      if (expectedExceptionAttribute == null)
+        return node;
+
       var errors = _validator.Validate (node).ToList();
 
-      if (errors.Count > 0)
+      foreach (var error in errors)
       {
-        foreach (var error in errors)
-        {
-          Log.Warning ("{@file} - {@method}: {@category}:\n {@message}", error.FileName, error.MethodName, error.Category, error.Reason);
-        }
-
-        return node;
+        Log.Warning ("{@file} - {@method}: {@category}:\n {@message}", error.FileName, error.MethodName, error.Category, error.Reason);
       }
 
-      var expectedExceptionAttribute = QueryExpectedExceptionAttributes (node).SingleOrDefault();
-
-      if (expectedExceptionAttribute == null) return node;
+      if (errors.Count != 0)
+        return node;
 
       var withTransformedBody = _methodBodyTransformer.Transform (node, expectedExceptionAttribute);
       return _attributeRemover.Transform (withTransformedBody, expectedExceptionAttribute);
     }
 
-    private IEnumerable<ExpectedExceptionModel> QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)
+    private ExpectedExceptionModel QueryExpectedExceptionAttributes (BaseMethodDeclarationSyntax node)
     {
       var methodSymbol = _semanticModel.GetDeclaredSymbol (node);
       var attributes = methodSymbol.GetAttributes();
       return attributes
           .Where (attribute => attribute.AttributeClass.Name == "ExpectedExceptionAttribute")
           .Select (ExpectedExceptionModel.CreateFromAttributeData)
-          .ToList();
+          .SingleOrDefault();
     }
   }
 }
