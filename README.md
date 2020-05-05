@@ -67,3 +67,12 @@ Sample invocation:
  e.g. referencing files with relative paths, will break and have to be manually fixed.
  Nunit3 exposes the old working directory with the `TestContext.CurrentContext.TestDirectory` property. This should be used to reference files with absolute paths or
  set `Environment.CurrentDirectory` to emulate NUnit 2 behavior
+
+### Other known pitfalls
+
+If an unexpected exception occurs during execution of a `[OneTimeTeardown]` method, the TestFixture (and the entire test run) is reported as failed, 
+but the individual tests that ran inside the TestFixture are **not** marked as failed. 
+This appears to only happen with `[OneTimeTeardown]`, errors inside `[SetUp]`, `[Teardown]` and `[OneTimeSetUp]` methods **do** mark the individual tests as failed as well. 
+Some IDEs like JetBrains Rider mark the TestFixture itself as failed if such an error occurs, but other IDEs or build systems may not. 
+Specifically, TeamCity appears to ignore such failures and report the test run as succeeded. 
+The NUnit3 console does report such errors, meaning they will be visible in the build log, but since the build may not be displayed as failed, they may not be prominent enough.
